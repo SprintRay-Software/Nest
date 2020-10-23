@@ -106,6 +106,7 @@ int CommonUtil::ToTree(vector<NestPath>& list_para, int idstart)
 					Segments tmep = p.GetSegments()->at(0);
 					p.GetSegments()->erase(p.GetSegments()->begin());
 					p.GetSegments()->push_back(tmep);
+					break;
 				}
 				else
 				{

@@ -7,6 +7,7 @@
 #include "QCoreApplication"
 #include "QDir"
 #include "QDirIterator"
+#include "qDebug"
 
 using namespace std;
 
@@ -18,6 +19,7 @@ bool Autoplace::Read(string file_name, vector<NestPath> &temp_polygons, double s
 	file.open(file_name, ios::in);
 	if (!file.is_open()) return 0;
 	string str;
+    qDebug()<<"Read";
 	while (getline(file, str))
 	{
 		int count;
@@ -32,9 +34,10 @@ bool Autoplace::Read(string file_name, vector<NestPath> &temp_polygons, double s
 			polygon.Add(x, y);
 			//polygon->bid = id;
 		}
-		string::size_type iPos = file_name.find_last_of('//') + 1;
-		string filename = file_name.substr(iPos, file_name.length() - iPos);
-		string name = filename.substr(0, filename.rfind("."));
+        string::size_type iPos = file_name.find_last_of('/') + 1;
+        string filename = file_name.substr(iPos, file_name.length() - iPos);
+        string name = filename.substr(0, filename.rfind("."));
+        qDebug()<<"name = "<<QString::fromStdString(name);
 		polygon.m_name = name;
 		polygon.SetRotation(4);
 
@@ -93,11 +96,15 @@ vector<vector<Placement>> Autoplace::Translate_Coor(double scale, double populat
 
     QString path = QCoreApplication::applicationDirPath() + "/Borderfinder/";
     QFileInfoList filelist;
-    Find_Files(path, "txt",filelist);
+    qDebug()<< "path:"<<path;
+    Find_Files(path, ".txt",filelist);
+
+    qDebug()<< "filelist.size:"<<filelist.size();
 
 	for (int i = 0; i < filelist.size(); i++)
 	{
-        Read(filelist.at(i).fileName().toStdString(), polygons, scale);
+        qDebug()<< "filelist.name:"<<filelist.at(i).fileName();
+        Read((path.toStdString() + filelist.at(i).fileName().toStdString()), polygons, scale);
 	}
 
 
@@ -115,6 +122,7 @@ vector<vector<Placement>> Autoplace::Translate_Coor(double scale, double populat
 	cfg.m_population_size = population;
 
 	vector<vector<Placement>> place;
+    qDebug()<< "polygons.size:"<<polygons.size();
 	if (polygons.size() <= 0)
 	{
 		return place;
@@ -192,26 +200,25 @@ void Autoplace::Translate(vector<NestPath> &binPath_para, vector<vector<Placemen
 	return;
 }
 
-QFileInfoList Autoplace::Find_Files(const QString &strFilePath, const QString &strNameFilters, QFileInfoList &fileList)
+QFileInfoList Autoplace::Find_Files(const QString &strFilePath, const QString &strNameFilters, QFileInfoList &SuffixInfoList)
 {
     if (strFilePath.isEmpty() || strNameFilters.isEmpty())
     {
-        return fileList;
+        return SuffixInfoList;
     }
-    QDir dir;
-    QStringList filters;
-    filters << strNameFilters;
-    dir.setPath(strFilePath);
-    dir.setNameFilters(filters);
-    QDirIterator iter(dir,QDirIterator::Subdirectories);
-    while (iter.hasNext())
+    QFileInfoList InfoList = QDir(strFilePath).entryInfoList();
+    qDebug()<< "InfoList.size:"<<InfoList.size();
+    foreach(QFileInfo fileInfo, InfoList)
     {
-        iter.next();
-        QFileInfo info=iter.fileInfo();
-        if (info.isFile())
+        if(!fileInfo.isFile()) continue;
+        qDebug()<< "fileInfo.suffix:"<<fileInfo.suffix();
+        if(0==fileInfo.suffix().compare("txt"))
         {
-            fileList.append(info);
+            qDebug()<< "SuffixInfoList.size:"<<SuffixInfoList.size();
+            qDebug()<< "SuffixInfoList << fileInfo";
+            SuffixInfoList << fileInfo;
+            qDebug()<< "SuffixInfoList.size2:"<<SuffixInfoList.size();
         }
     }
-    return fileList;
+    return SuffixInfoList;
 }
