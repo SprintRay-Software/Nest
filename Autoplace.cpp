@@ -87,6 +87,7 @@ bool Autoplace::Read(string file_name, vector<NestPath> &temp_polygons, double s
 
 vector<vector<Placement>> Autoplace::Translate_Coor(double scale, double population)
 {
+    qDebug()<< "Translate_Coor:";
 	vector<NestPath> polygons;
 
 	//GetModuleFileName(NULL, (LPSTR)Buffer, sizeof(Buffer));
