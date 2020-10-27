@@ -11,16 +11,16 @@ Gson::~Gson()
 
 }
 
-string Gson::ToJson(NfpKey key)
+string Gson::toJson(NfpKey key)
 {
-	m_str = "A:" + to_string(key.m_a) + "Arotation:" + to_string(key.m_arotation) + "B:" + to_string(key.m_b) + "Brotation:" + to_string(key.m_brotation) + "B:";
-	if (key.m_inside)
+    str = "A:" + to_string(key.a) + "Arotation:" + to_string(key.aRotation) + "B:" + to_string(key.b) + "Brotation:" + to_string(key.bRotation) + "B:";
+    if (key.inside)
 	{
-		m_str = m_str + "true";
+        str = str + "true";
 	}
 	else
 	{
-		m_str = m_str + "false";
+        str = str + "false";
 	}
-	return m_str;
+    return str;
 }

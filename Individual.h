@@ -11,29 +11,21 @@ public:
 	Individual();
 	Individual(vector<NestPath> placement, vector<int> rotation);
 	int Size();
-	vector<NestPath> &GetPlacement();
-	void SetPlacement(vector<NestPath> placement);
-	vector<int> GetRotation();
-	void SetRotation(vector<int> rotation);
-	int CompareTo(Individual o);
-	bool Equals(Individual obj);
-	string ToString();
-	double GetFitness();
-	void SetFitness(double fitness);
-	bool operator==(const Individual& Ind);
-	bool operator < (const Individual& Ind);
-    static bool Compare(Individual ind1,Individual ind2);
-
-//    struct LocMinSorter
-//    {
-//      inline bool operator()(const Individual& locMin1, const Individual& locMin2)
-//      {
-//        return locMin2.m_fitness > locMin1.m_fitness;
-//      }
-//    };
+    vector<NestPath> &getPlacement();
+    void setPlacement(vector<NestPath> placement);
+    vector<int> getRotation();
+    void setRotation(vector<int> rotation);
+    int compareTo(Individual o);
+    bool equals(Individual obj);
+    string toString();
+    double getFitness();
+    void setFitness(double fitness);
+    bool operator==(const Individual& ind);
+    bool operator < (const Individual& ind);
+    static bool compare(Individual ind1,Individual ind2);
 
 public:
-	vector<NestPath> m_placement;
-	vector<int> m_rotation;
-	double m_fitness;
+    vector<NestPath> placement;
+    vector<int> rotation;
+    double fitness;
 };

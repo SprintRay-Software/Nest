@@ -13,102 +13,72 @@ using namespace std;
 
 #define pi 3.14159265
 
-bool Autoplace::Read(string file_name, vector<NestPath> &temp_polygons, double scale)
+bool Autoplace::read(string fileName, vector<NestPath> &polygons, double scale)
 {
 	ifstream file;
-	file.open(file_name, ios::in);
+    file.open(fileName, ios::in);
 	if (!file.is_open()) return 0;
 	string str;
-    qDebug()<<"Read";
 	while (getline(file, str))
 	{
 		int count;
 		stringstream iss(str);
 		iss >> count;
-		NestPath polygon;
+        NestPath tempPolygon;
 		while (count--) {
-			string substr;
-			iss >> substr;
+            string subStr;
+            iss >> subStr;
 			float x, y;
-			sscanf(substr.c_str(), "[%f,%f]", &x, &y);
-			polygon.Add(x, y);
-			//polygon->bid = id;
+            sscanf(subStr.c_str(), "[%f,%f]", &x, &y);
+            tempPolygon.Add(x, y);
 		}
-        string::size_type iPos = file_name.find_last_of('/') + 1;
-        string filename = file_name.substr(iPos, file_name.length() - iPos);
-        string name = filename.substr(0, filename.rfind("."));
-        qDebug()<<"name = "<<QString::fromStdString(name);
-		polygon.m_name = name;
-		polygon.SetRotation(4);
+        string::size_type iPos = fileName.find_last_of('/') + 1;
+        string tempFileName = fileName.substr(iPos, fileName.length() - iPos);
+        string name = tempFileName.substr(0, tempFileName.rfind("."));
+        tempPolygon.name = name;
+        tempPolygon.setRotation(4);
 
-		double min_x = polygon.m_segments->at(0).m_x, max_x = polygon.m_segments->at(0).m_x, min_y = polygon.m_segments->at(0).m_y, max_y = polygon.m_segments->at(0).m_y;
-		for (int i = 0; i < polygon.m_segments->size(); i++)
+        double minX = tempPolygon.segments->at(0).x, maxX = tempPolygon.segments->at(0).x, minY = tempPolygon.segments->at(0).y, maxY = tempPolygon.segments->at(0).y;
+        for (int i = 0; i < tempPolygon.segments->size(); i++)
 		{
-			if (polygon.m_segments->at(i).m_x <= min_x)
+            if (tempPolygon.segments->at(i).x <= minX)
 			{
-				min_x = polygon.m_segments->at(i).m_x;
+                minX = tempPolygon.segments->at(i).x;
 			}
-			if (polygon.m_segments->at(i).m_x >= max_x)
+            if (tempPolygon.segments->at(i).x >= maxX)
 			{
-				max_x = polygon.m_segments->at(i).m_x;
+                maxX = tempPolygon.segments->at(i).x;
 			}
-			if (polygon.m_segments->at(i).m_y <= min_y)
+            if (tempPolygon.segments->at(i).y <= minY)
 			{
-				min_y = polygon.m_segments->at(i).m_y;
+                minY = tempPolygon.segments->at(i).y;
 			}
-			if (polygon.m_segments->at(i).m_y >= max_y)
+            if (tempPolygon.segments->at(i).y >= maxY)
 			{
-				max_y = polygon.m_segments->at(i).m_y;
+                maxY = tempPolygon.segments->at(i).y;
 			}
 		}
-		polygon.m_coor_x = (max_x + min_x) / 2;
-		polygon.m_coor_y = (max_y + min_y) / 2;
-		for (int i = 0; i < polygon.m_segments->size(); i++)
+        tempPolygon.coor_x = (maxX + minX) / 2;
+        tempPolygon.coor_y = (maxY + minY) / 2;
+        for (int i = 0; i < tempPolygon.segments->size(); i++)
 		{
-			polygon.m_segments->at(i).m_x = (polygon.m_segments->at(i).m_x - polygon.m_coor_x) * scale + polygon.m_coor_x;
-			polygon.m_segments->at(i).m_y = (polygon.m_segments->at(i).m_y - polygon.m_coor_y) * scale + polygon.m_coor_y;
+            tempPolygon.segments->at(i).x = (tempPolygon.segments->at(i).x - tempPolygon.coor_x) * scale + tempPolygon.coor_x;
+            tempPolygon.segments->at(i).y = (tempPolygon.segments->at(i).y - tempPolygon.coor_y) * scale + tempPolygon.coor_y;
 		}
-		temp_polygons.push_back(polygon);
+        polygons.push_back(tempPolygon);
 	}
 };
 
-//string Autoplace::Print_Path()
-//{
-//	TCHAR Buffer[1000];
-//	string a;
-//	DWORD dwRet;
-//	GetModuleFileName(NULL, (LPSTR)Buffer, sizeof(Buffer));
-//	string path = Buffer;
-//	int pos = path.rfind("\\", path.length());
-//	path = path.substr(0, pos);
-//	path += "\\Borderfinder\\";
-//	return path;
-//}
-
-vector<vector<Placement>> Autoplace::Translate_Coor(double scale, double population)
+vector<vector<Placement>> Autoplace::translateCoor(double scale, double population)
 {
-    qDebug()<< "Translate_Coor:";
 	vector<NestPath> polygons;
-
-	//GetModuleFileName(NULL, (LPSTR)Buffer, sizeof(Buffer));
-	//string path = Buffer;
-	//int pos = path.rfind("\\", path.length());
-	//path = path.substr(0, pos);
-
     QString path = QCoreApplication::applicationDirPath() + "/Borderfinder/";
-    QFileInfoList filelist;
-    qDebug()<< "path:"<<path;
-    Find_Files(path, ".txt",filelist);
-
-    qDebug()<< "filelist.size:"<<filelist.size();
-
-	for (int i = 0; i < filelist.size(); i++)
+    QFileInfoList fileList;
+    findFiles(path, ".txt",fileList);
+    for (int i = 0; i < fileList.size(); i++)
 	{
-        qDebug()<< "filelist.name:"<<filelist.at(i).fileName();
-        Read((path.toStdString() + filelist.at(i).fileName().toStdString()), polygons, scale);
+        read((path.toStdString() + fileList.at(i).fileName().toStdString()), polygons, scale);
 	}
-
-
 	NestPath bin;
 	double binWidth = 1920;
 	double binHeight = 1080;
@@ -116,74 +86,63 @@ vector<vector<Placement>> Autoplace::Translate_Coor(double scale, double populat
 	bin.Add(binWidth, 0);
 	bin.Add(binWidth, binHeight);
 	bin.Add(0, binHeight);
-	bin.m_bid = -1;
-
+    bin.bid = -1;
 	Config cfg;
-	cfg.m_spacing = 0;
-	cfg.m_population_size = population;
-
+    cfg.spacing = 0;
+    cfg.populationSize = population;
 	vector<vector<Placement>> place;
-    qDebug()<< "polygons.size:"<<polygons.size();
 	if (polygons.size() <= 0)
 	{
 		return place;
 	}
 	Nest nest(bin, polygons, cfg, population);
-	place = nest.StartNest();                 
+    place = nest.startNest();
 
 	for (int i = 0; i < polygons.size(); i++)
 	{
 		for (int j = 0; j < place[0].size(); j++)
 		{
-			if (polygons.at(i).m_name == place[0].at(j).m_name)
+            if (polygons.at(i).name == place[0].at(j).name)
 			{
-				place[0].at(j).m_coor_x = polygons.at(i).m_coor_x;
-				place[0].at(j).m_coor_y = polygons.at(i).m_coor_y;
-				place[0].at(j).m_istranslate = false;;
+                place[0].at(j).coorX = polygons.at(i).coor_x;
+                place[0].at(j).coorY = polygons.at(i).coor_y;
+                place[0].at(j).isTranslate = false;;
 			}
 		}
 	}
-
-	//Translate(*polygons, place);
 	return place;
 }
 
-void Autoplace::Translate(vector<NestPath> &binPath_para, vector<vector<Placement>> place)
+void Autoplace::translate(vector<NestPath> &binPath, vector<vector<Placement>> place)
 {
 	double TJ[3];
 	double SX[3];
 	double R[3][3];
-	for (int i = 0; i < binPath_para.size(); i++)
+    for (int i = 0; i < binPath.size(); i++)
 	{
 		for (int j = 0; j < place.size(); j++)
 		{
-			//double R[3][3] = { {cos(place[j][i].rotate), sin(place[j][i].rotate), place[j][i].translate.x * cos(place[j][i].rotate)+ place[j][i].translate.y * sin(place[j][i].rotate)} ,
-			//{-sin(place[j][i].rotate), cos(place[j][i].rotate), -place[j][i].translate.x * sin(place[j][i].rotate) + place[j][i].translate.y * cos(place[j][i].rotate)},
-			//{0, 0, 1} };
 			for (int n = 0; n < place[j].size(); n++)
 			{
-				if (binPath_para[i].m_bid == place[j][n].m_bid)
+                if (binPath[i].bid == place[j][n].bid)
 				{
-//					double R[3][3] = { {cos(place[j][n].rotate * pi / 180), sin(place[j][n].rotate * pi / 180), 0} ,
-//{-sin(place[j][n].rotate * pi / 180), cos(place[j][n].rotate * pi / 180), 0},
-//{place[j][n].translate.x, place[j][n].translate.y, 1} };
-					R[0][0] = cos(place[j][n].m_rotate * pi / 180);
-					R[0][1] = sin(place[j][n].m_rotate * pi / 180);
+                    R[0][0] = cos(place[j][n].rotate * pi / 180);
+                    R[0][1] = sin(place[j][n].rotate * pi / 180);
 					R[0][2] = 0;
-					R[1][0] = -sin(place[j][n].m_rotate * pi / 180);
-					R[1][1] = cos(place[j][n].m_rotate * pi / 180);
+                    R[1][0] = -sin(place[j][n].rotate * pi / 180);
+                    R[1][1] = cos(place[j][n].rotate * pi / 180);
 					R[1][2] = 0;
-					R[2][0] = place[j][n].m_translate.m_x;
-					R[2][1] = place[j][n].m_translate.m_y;
+                    R[2][0] = place[j][n].translate.x;
+                    R[2][1] = place[j][n].translate.y;
 					R[2][2] = 1;
 					break;
 				}
 			}
 
-			for (int k = 0; k < binPath_para[i].m_segments->size(); k++)
+            for (int k = 0; k < binPath[i].segments->size(); k++)
 			{
-				TJ[0] = binPath_para[i].m_segments->at(k).m_x;
-				TJ[1] = binPath_para[i].m_segments->at(k).m_y;
+                TJ[0] = binPath[i].segments->at(k).x;
+                TJ[1] = binPath[i].segments->at(k).y;
 				TJ[2] = 1;
 				for (int j = 0; j < 3; j++)    
 				{
@@ -193,33 +152,28 @@ void Autoplace::Translate(vector<NestPath> &binPath_para, vector<vector<Placemen
 						int a = 0;
 					}
 				}
-				binPath_para[i].m_segments->at(k).m_x = SX[0];
-				binPath_para[i].m_segments->at(k).m_y = SX[1];
+                binPath[i].segments->at(k).x = SX[0];
+                binPath[i].segments->at(k).y = SX[1];
 			}
 		}
 	}
 	return;
 }
 
-QFileInfoList Autoplace::Find_Files(const QString &strFilePath, const QString &strNameFilters, QFileInfoList &SuffixInfoList)
+QFileInfoList Autoplace::findFiles(const QString &strFilePath, const QString &strNameFilters, QFileInfoList &suffixInfoList)
 {
     if (strFilePath.isEmpty() || strNameFilters.isEmpty())
     {
-        return SuffixInfoList;
+        return suffixInfoList;
     }
-    QFileInfoList InfoList = QDir(strFilePath).entryInfoList();
-    qDebug()<< "InfoList.size:"<<InfoList.size();
-    foreach(QFileInfo fileInfo, InfoList)
+    QFileInfoList infoList = QDir(strFilePath).entryInfoList();
+    foreach(QFileInfo fileInfo, infoList)
     {
         if(!fileInfo.isFile()) continue;
-        qDebug()<< "fileInfo.suffix:"<<fileInfo.suffix();
         if(0==fileInfo.suffix().compare("txt"))
         {
-            qDebug()<< "SuffixInfoList.size:"<<SuffixInfoList.size();
-            qDebug()<< "SuffixInfoList << fileInfo";
-            SuffixInfoList << fileInfo;
-            qDebug()<< "SuffixInfoList.size2:"<<SuffixInfoList.size();
+            suffixInfoList << fileInfo;
         }
     }
-    return SuffixInfoList;
+    return suffixInfoList;
 }

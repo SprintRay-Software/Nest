@@ -8,95 +8,95 @@ struct LocMaxSorter
 {
   inline bool operator()(const Individual& locMin1, const Individual& locMin2)
   {
-    return locMin2.m_fitness < locMin1.m_fitness;
+    return locMin2.fitness < locMin1.fitness;
   }
 };
 
 GeneticAlgorithm::GeneticAlgorithm(vector<NestPath> adam, NestPath bin, Config config)
 {
-	m_adam = adam;
-	m_bin = bin;
-	m_config = config;
-	m_binBounds = GeometryUtil::GetPolygonBounds(bin);
-	m_population = new vector<Individual>();
-	Init();
+    this->adam = adam;
+    this->bin = bin;
+    this->config = config;
+    this->binBounds = GeometryUtil::getPolygonBounds(bin);
+    this->population = new vector<Individual>();
+    init();
 }
 
-void GeneticAlgorithm::Generation()
+void GeneticAlgorithm::generation()
 {
 	vector<Individual> *newpopulation = new vector<Individual>();
-    std::sort(m_population->begin(), m_population->end(),LocMaxSorter());
-	newpopulation->push_back(m_population->at(0));
-	while (newpopulation->size() < m_config.m_population_size)
+    std::sort(population->begin(), population->end(),LocMaxSorter());
+    newpopulation->push_back(population->at(0));
+    while (newpopulation->size() < config.populationSize)
 	{
-		Individual male = RandomWeightedIndividual(NULL);
-		Individual female = RandomWeightedIndividual(&male);
-		vector<Individual> children = Mate(male, female);
-		newpopulation->push_back(Mutate(children.at(0)));
-		if (newpopulation->size() < m_population->size())
+        Individual male = randomWeightedIndividual(NULL);
+        Individual female = randomWeightedIndividual(&male);
+        vector<Individual> children = mate(male, female);
+        newpopulation->push_back(mutate(children.at(0)));
+        if (newpopulation->size() < population->size())
 		{
-			newpopulation->push_back(Mutate(children.at(1)));
+            newpopulation->push_back(mutate(children.at(1)));
 		}
 	}
-	m_population = newpopulation;
+    population = newpopulation;
 }
 
-vector<Individual> GeneticAlgorithm::Mate(Individual male, Individual female)
+vector<Individual> GeneticAlgorithm::mate(Individual male, Individual female)
 {
 	vector<Individual> children;
-	double max_temp = max(rand() % 1000 / 1000.0, 0.1);
-	double min_temp = min(max_temp, 0.9);
-	int si = male.m_placement.size() - 1;
-	long cutpoint = round(min_temp*si);
+    double tempMax = max(rand() % 1000 / 1000.0, 0.1);
+    double tempMin = min(tempMax, 0.9);
+    int si = male.placement.size() - 1;
+    long cutPoint = round(tempMin*si);
 
 	vector<NestPath> gene1;
 	vector<int> rot1;
 	vector<NestPath> gene2;
 	vector<int> rot2;
 
-	NestPath np_temp;
-	for (int i = 0; i < cutpoint; i++) 
+    NestPath tempNp;
+    for (int i = 0; i < cutPoint; i++)
 	{
-		np_temp = male.m_placement.at(i);
-		gene1.push_back(np_temp);
-		rot1.push_back(male.GetRotation().at(i));
-		np_temp = female.m_placement.at(i);
-		gene2.push_back(np_temp);
-		rot2.push_back(female.GetRotation().at(i));
+        tempNp = male.placement.at(i);
+        gene1.push_back(tempNp);
+        rot1.push_back(male.getRotation().at(i));
+        tempNp = female.placement.at(i);
+        gene2.push_back(tempNp);
+        rot2.push_back(female.getRotation().at(i));
 	}
 
-	for (int i = 0; i < female.m_placement.size(); i++)
+    for (int i = 0; i < female.placement.size(); i++)
 	{
-		if (!Contains(gene1, female.m_placement.at(i).GetId()))
+        if (!contains(gene1, female.placement.at(i).getId()))
 		{
-			gene1.push_back(female.m_placement.at(i));
-			rot1.push_back(female.m_rotation.at(i));
+            gene1.push_back(female.placement.at(i));
+            rot1.push_back(female.rotation.at(i));
 		}
 	}
 
-	for (int i = 0; i < male.m_placement.size(); i++)
+    for (int i = 0; i < male.placement.size(); i++)
 	{
-		if (!Contains(gene2, male.m_placement.at(i).GetId()))
+        if (!contains(gene2, male.placement.at(i).getId()))
 		{
-			gene2.push_back(male.m_placement.at(i));
-			rot2.push_back(male.m_rotation.at(i));
+            gene2.push_back(male.placement.at(i));
+            rot2.push_back(male.rotation.at(i));
 		}
 	}
 	Individual individual1(gene1, rot1);
 	Individual individual2(gene2, rot2);
 
-	CheckAndUpdate(individual1); CheckAndUpdate(individual2);
+    checkAndUpdate(individual1); checkAndUpdate(individual2);
 
 
 	children.push_back(individual1); children.push_back(individual2);
 	return children;
 }
 
-bool GeneticAlgorithm::Contains(vector<NestPath> gene, int id)
+bool GeneticAlgorithm::contains(vector<NestPath> gene, int id)
 {
 	for (int i = 0; i < gene.size(); i++) 
 	{
-		if (gene.at(i).GetId() == id) 
+        if (gene.at(i).getId() == id)
 		{
 			return true;
 		}
@@ -104,12 +104,12 @@ bool GeneticAlgorithm::Contains(vector<NestPath> gene, int id)
 	return false;
 }
 
-Individual GeneticAlgorithm::RandomWeightedIndividual(Individual *exclude) 
+Individual GeneticAlgorithm::randomWeightedIndividual(Individual *exclude)
 {
 	vector<Individual> pop;
-	for (int i = 0; i < m_population->size(); i++)
+    for (int i = 0; i < population->size(); i++)
 	{
-		Individual individual = m_population->at(i);
+        Individual individual = population->at(i);
 		Individual clone(individual);
 		pop.push_back(clone);
 	}
@@ -128,14 +128,14 @@ Individual GeneticAlgorithm::RandomWeightedIndividual(Individual *exclude)
 			}
 		}
 	}
-	double rand_temp = rand() % 1000 / 1000.0;
+    double tempRand = rand() % 1000 / 1000.0;
 	double lower = 0;
 	double weight = 1 / pop.size();
 	double upper = weight;
 
 	for (int i = 0; i < pop.size(); i++) 
 	{
-		if (rand_temp > lower && rand_temp < upper)
+        if (tempRand > lower && tempRand < upper)
 		{
 			return pop.at(i);
 		}
@@ -145,52 +145,52 @@ Individual GeneticAlgorithm::RandomWeightedIndividual(Individual *exclude)
 	return pop.at(0);
 }
 
-void GeneticAlgorithm::Init() 
+void GeneticAlgorithm::init()
 {
-	for (int i = 0; i < m_adam.size(); i++)
+    for (int i = 0; i < adam.size(); i++)
 	{
-		int angle = RandomAngle(m_adam.at(i));
-		m_angles.push_back(angle);
+        int angle = randomAngle(adam.at(i));
+        angles.push_back(angle);
 	}
-	m_population->push_back(Individual(m_adam, m_angles));
-	while (m_population->size() < m_config.m_population_size)
+    population->push_back(Individual(adam, angles));
+    while (population->size() < config.populationSize)
 	{
-		Individual mutant = Mutate(m_population->at(0));
-		m_population->push_back(mutant);
+        Individual mutant = mutate(population->at(0));
+        population->push_back(mutant);
 	}
 }
 
-Individual GeneticAlgorithm::Mutate(Individual individual) 
+Individual GeneticAlgorithm::mutate(Individual individual)
 {
 	Individual clone(individual);
-	for (int i = 0; i < clone.m_placement.size(); i++)
+    for (int i = 0; i < clone.placement.size(); i++)
 	{
 		double random = rand() % 1000 / 1000.0;
-		if (random < 0.05 * m_config.m_mutation_rate)
+        if (random < 0.05 * config.mutationRate)
 		{
 			int j = i + 1;
-			if (j < clone.m_placement.size())
+            if (j < clone.placement.size())
 			{
-				swap(clone.GetPlacement()[i], clone.GetPlacement()[j]);
+                swap(clone.getPlacement()[i], clone.getPlacement()[j]);
 			}
 		}
 		random = rand() % 1000 / 1000.0;
-		if (random < 0.05 * m_config.m_mutation_rate)
+        if (random < 0.05 * config.mutationRate)
 		{
-			int angle = RandomAngle(clone.m_placement.at(i));
-			clone.GetRotation()[i] = angle;
-			clone.m_rotation[i] = angle;
+            int angle = randomAngle(clone.placement.at(i));
+            clone.getRotation()[i] = angle;
+            clone.rotation[i] = angle;
 		}
 	}
-	CheckAndUpdate(clone);
+    checkAndUpdate(clone);
 	return clone;
 }
 
 
-int GeneticAlgorithm::RandomAngle(NestPath part)
+int GeneticAlgorithm::randomAngle(NestPath part)
 {
 	vector<int> angleList;
-	int rotate = max(1, part.GetRotation());
+    int rotate = max(1, part.getRotation());
 	if (rotate == 0) 
 	{
 		angleList.push_back(0);
@@ -206,8 +206,8 @@ int GeneticAlgorithm::RandomAngle(NestPath part)
 	std::shuffle(angleList.begin(), angleList.end(), std::default_random_engine(seed));
 	for (int i = 0; i < angleList.size(); i++) 
 	{
-		Bound rotatedPart = GeometryUtil::RotatePolygon(part, angleList.at(i));
-		if (rotatedPart.GetWidth() < m_binBounds.GetWidth() && rotatedPart.GetHeight() < m_binBounds.GetHeight())
+        Bound rotatedPart = GeometryUtil::rotatePolygon(part, angleList.at(i));
+        if (rotatedPart.getWidth() < binBounds.getWidth() && rotatedPart.getHeight() < binBounds.getHeight())
 		{
 			return angleList.at(i);
 		}
@@ -215,57 +215,57 @@ int GeneticAlgorithm::RandomAngle(NestPath part)
 	return -1;
 }
 
-vector<NestPath> GeneticAlgorithm::GetAdam()
+vector<NestPath> GeneticAlgorithm::getAdam()
 {
-	return m_adam;
+    return adam;
 }
 
-void GeneticAlgorithm::SetAdam(vector<NestPath> adam)
+void GeneticAlgorithm::setAdam(vector<NestPath> adam)
 {
-	m_adam = adam;
+    this->adam = adam;
 }
 
-NestPath GeneticAlgorithm::GetBin() 
+NestPath GeneticAlgorithm::getBin()
 {
-	return m_bin;
+    return bin;
 }
 
-void GeneticAlgorithm::SetBin(NestPath bin) 
+void GeneticAlgorithm::setBin(NestPath bin)
 {
-	m_bin = bin;
+    this->bin = bin;
 }
 
-void GeneticAlgorithm::CheckAndUpdate(Individual &individual) 
+void GeneticAlgorithm::checkAndUpdate(Individual &individual)
 {
-	for (int i = 0; i < individual.m_placement.size(); i++)
+    for (int i = 0; i < individual.placement.size(); i++)
 	{
-		int angle = individual.GetRotation().at(i);
-		NestPath nestPath = individual.GetPlacement().at(i);
-		Bound rotateBound = GeometryUtil::RotatePolygon(nestPath, angle);
-		if (rotateBound.m_width < m_binBounds.m_width && rotateBound.m_height < m_binBounds.m_height)
+        int angle = individual.getRotation().at(i);
+        NestPath nestPath = individual.getPlacement().at(i);
+        Bound rotateBound = GeometryUtil::rotatePolygon(nestPath, angle);
+        if (rotateBound.width < binBounds.width && rotateBound.height < binBounds.height)
 		{
 			continue;
 		}
 		else 
 		{
-			int safeAngle = RandomAngle(nestPath);
-			individual.GetRotation()[i] = safeAngle;
+            int safeAngle = randomAngle(nestPath);
+            individual.getRotation()[i] = safeAngle;
 		}
 	}
 }
 
-void GeneticAlgorithm::Shuffle(vector<int> &paramObject)
+void GeneticAlgorithm::shuffle(vector<int> &paramObject)
 {
-	vector<int> temp_Object = paramObject;
-	for (int i = temp_Object.size() - 1; i > 0; i--)
+    vector<int> tempObject = paramObject;
+    for (int i = tempObject.size() - 1; i > 0; i--)
 	{
 		int pos = rand() % i;
-		paramObject[i] = temp_Object[pos];
-		for (int j = pos; j < temp_Object.size() - 1; j++)
+        paramObject[i] = tempObject[pos];
+        for (int j = pos; j < tempObject.size() - 1; j++)
 		{
-			temp_Object[j] = temp_Object[j + 1];
+            tempObject[j] = tempObject[j + 1];
 		}
 	}
-	paramObject[0] = temp_Object[0];
+    paramObject[0] = tempObject[0];
 }
 

@@ -1,66 +1,66 @@
 #include "NfpKey.h"
 
 
-NfpKey::NfpKey(int a, int b, bool inside, int arotation, int brotation)
+NfpKey::NfpKey(int a, int b, bool inside, int aRotation, int bRotation)
 {
-	m_a = a;
-	m_b = b;
-	m_inside = inside;
-	m_arotation = arotation;
-	m_brotation = brotation;
+    this->a = a;
+    this->b = b;
+    this->inside = inside;
+    this->aRotation = aRotation;
+    this->bRotation = bRotation;
 }
 
 NfpKey::NfpKey()
 {
 }
 
-int NfpKey::GetA()
+int NfpKey::getA()
 {
-	return m_a;
+    return a;
 }
 
-void NfpKey::SetA(int a)
+void NfpKey::setA(int a)
 {
-	m_a = a;
+    this->a = a;
 }
 
-int NfpKey::GetB()
+int NfpKey::getB()
 {
-	return m_b;
+    return b;
 }
 
-void NfpKey::SetB(int b)
+void NfpKey::setB(int b)
 {
-	m_b = b;
+    this->b = b;
 }
 
 bool NfpKey::isInside()
 {
-	return m_inside;
+    return inside;
 }
 
-void NfpKey::SetInside(bool inside)
+void NfpKey::setInside(bool inside)
 {
-	m_inside = inside;
+    this->inside = inside;
 }
 
-int NfpKey::GetArotation()
+int NfpKey::getARotation()
 {
-	return m_arotation;
+    return aRotation;
 }
 
-void NfpKey::SetArotation(int arotation)
+void NfpKey::setARotation(int aRotation)
 {
-	m_arotation = arotation;
+    this->aRotation = aRotation;
 }
 
-int NfpKey::GetBrotation()
+int NfpKey::getBRotation()
 {
-	return m_brotation;
+    return bRotation;
 }
 
-void NfpKey::SetBrotation(int brotation)
+void NfpKey::setBRotation(int bRotation)
 {
-	m_brotation = brotation;
+    this->bRotation = bRotation;
 }
 

@@ -8,7 +8,7 @@ public:
 	SegmentRelation();
 
 public:
-	int m_type;
-	int m_a;
-	int m_b;
+    int type;
+    int a;
+    int b;
 };

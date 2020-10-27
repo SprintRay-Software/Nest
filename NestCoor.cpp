@@ -7,26 +7,26 @@ NestCoor::NestCoor()
 
 NestCoor::NestCoor(double x, double y)
 {
-	m_x = x;
-	m_y = y;
+    this->x = x;
+    this->y = y;
 }
 
-double NestCoor::GetX()
+double NestCoor::getX()
 {
-	return m_x;
+    return x;
 }
 
-void NestCoor::SetX(double x)
+void NestCoor::setX(double x)
 {
-	m_x = x;
+    this->x = x;
 }
 
-double NestCoor::GetY()
+double NestCoor::getY()
 {
-	return m_y;
+    return y;
 }
 
-void NestCoor::SetY(double y)
+void NestCoor::setY(double y)
 {
-	m_y = y;
+    this->y = y;
 }

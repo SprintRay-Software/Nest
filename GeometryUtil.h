@@ -13,36 +13,34 @@ using namespace ClipperLib;
 class GeometryUtil
 {
 public:
-	static bool AlmostEqual(double a, double b);
-	static bool AlmostEqual(double a, double b, double tolerance);
-	static double PolygonArea(NestPath polygon);
-	static bool OnSegment(Segments A, Segments B, Segments p);
-	static bool PointInPolygon(Segments point, NestPath polygon);
-	static Bound GetPolygonBounds(NestPath polygon);
-	static Bound RotatePolygon(NestPath polygon, int angle);
-	static NestPath RotatePolygon2Polygon(NestPath polygon, int degrees);
-	static bool isRectangle(NestPath poly, double tolerance);
-	static vector<NestPath> NoFitPolygon(NestPath A, NestPath B, bool inside, bool searchEdges);
-	static Segments* SearchStartPoint(NestPath CA, NestPath CB, bool inside, vector<NestPath> NFP);
-	static bool InNfp(Segments p, vector<NestPath>& nfp);
-	static double PolygonProjectionDistance(NestPath CA, NestPath CB, Segments direction);
-	static bool Intersect(NestPath CA, NestPath CB);
-	static Segments* LineIntersect(Segments A, Segments B, Segments E, Segments F, bool infinite);
-	static double PolygonSlideDistance(NestPath TA, NestPath TB, Segments direction, bool ignoreNegative);
-	static Segments NormalizeVector(Segments v);
-	static double SegmentDistance(Segments A, Segments B, Segments E, Segments F, Segments direction);
-	static double PointDistance(Segments p, Segments s1, Segments s2, Segments normal, bool infinite);
-	static vector<NestPath>* NoFitPolygonRectangle(NestPath A, NestPath B);
-	static vector<NestPath> MinkowskiDifference(NestPath A, NestPath B);
-	static NestPath Linearize(Segments p1, Segments p2, double rx, double ry, double angle, int laregearc, int sweep, double tol);
-	static DataExchange ConvertToSvg(Segments center, double rx, double ry, double theta1, double extent, double angleDegrees);
-	static DataExchange ConvertToCenter(Segments p1, Segments p2, double rx, double ry, double angleDgrees, int largearc, int sweep);
-	static double DegreesToRadians(double angle);
-	static double RadiansToDegree(double angle);
-	static bool WithinDistance(Segments p1, Segments p2, double distance);
+    static bool almostEqual(double a, double b);
+    static bool almostEqual(double a, double b, double tolerance);
+    static double polygonArea(NestPath polygon);
+    static bool onSegment(Segments A, Segments B, Segments p);
+    static bool pointInPolygon(Segments point, NestPath polygon);
+    static Bound getPolygonBounds(NestPath polygon);
+    static Bound rotatePolygon(NestPath polygon, int angle);
+    static NestPath rotatePolygon2Polygon(NestPath polygon, int degrees);
+    static bool isRectangle(NestPath poly, double tolerance);
+    static vector<NestPath> noFitPolygon(NestPath A, NestPath B, bool inside, bool searchEdges);
+    static Segments* searchStartPoint(NestPath CA, NestPath CB, bool inside, vector<NestPath> NFP);
+    static bool inNfp(Segments p, vector<NestPath>& nfp);
+    static double polygonProjectionDistance(NestPath CA, NestPath CB, Segments direction);
+    static bool intersect(NestPath CA, NestPath CB);
+    static Segments* lineIntersect(Segments A, Segments B, Segments E, Segments F, bool infinite);
+    static double polygonSlideDistance(NestPath TA, NestPath TB, Segments direction, bool ignoreNegative);
+    static Segments normalizeVector(Segments v);
+    static double segmentDistance(Segments A, Segments B, Segments E, Segments F, Segments direction);
+    static double pointDistance(Segments p, Segments s1, Segments s2, Segments normal, bool infinite);
+    static vector<NestPath>* noFitPolygonRectangle(NestPath A, NestPath B);
+    static vector<NestPath> minkowskiDifference(NestPath A, NestPath B);
+    static NestPath linearize(Segments p1, Segments p2, double rx, double ry, double angle, int laregearc, int sweep, double tol);
+    static DataExchange convertToSvg(Segments center, double rx, double ry, double theta1, double extent, double angleDegrees);
+    static DataExchange convertToCenter(Segments p1, Segments p2, double rx, double ry, double angleDgrees, int largearc, int sweep);
+    static double degreesToRadians(double angle);
+    static double radiansToDegree(double angle);
+    static bool withinDistance(Segments p1, Segments p2, double distance);
 
 private:
-	static double m_tol;
+    static double tol;
 };
-
-//double GeometryUtil::TOL = pow(10, -2);

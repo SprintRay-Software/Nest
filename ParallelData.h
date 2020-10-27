@@ -9,12 +9,12 @@ class ParallelData
 public:
 	ParallelData();
 	ParallelData(NfpKey key, vector<NestPath> *value);
-	NfpKey GetKey();
-	void SetKey(NfpKey key);
-	vector<NestPath> GetValue();
-	void SetValue(vector<NestPath> *value);
+    NfpKey getKey();
+    void setKey(NfpKey key);
+    vector<NestPath> getValue();
+    void setValue(vector<NestPath> *value);
 
 public:
-	NfpKey m_key;
-	vector<NestPath> *m_value;
+    NfpKey key;
+    vector<NestPath> *value;
 };

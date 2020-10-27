@@ -5,38 +5,38 @@ NfpPair::NfpPair()
 }
 NfpPair::NfpPair(NestPath a, NestPath b, NfpKey key)
 {
-	m_a = a;
-	m_b = b;
-	m_key = key;
+    this->a = a;
+    this->b = b;
+    this->key = key;
 }
 
-NestPath NfpPair::GetA()
+NestPath NfpPair::getA()
 {
-	return m_a;
+    return a;
 }
 
-void NfpPair::SetA(NestPath a)
+void NfpPair::setA(NestPath a)
 {
-	m_a = a;
+    this->a = a;
 }
 
-NestPath NfpPair::GetB()
+NestPath NfpPair::getB()
 {
-	return m_b;
+    return b;
 }
 
-void NfpPair::SetB(NestPath b)
+void NfpPair::setB(NestPath b)
 {
-	m_b = b;
+    this->b = b;
 }
 
-NfpKey NfpPair::GetKey()
+NfpKey NfpPair::getKey()
 {
-	return m_key;
+    return key;
 }
 
-void NfpPair::SetKey(NfpKey key)
+void NfpPair::setKey(NfpKey key)
 {
-	m_key = key;
+    this->key = key;
 }
 

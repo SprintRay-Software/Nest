@@ -1,57 +1,37 @@
 #include "GeometryUtil.h"
 #define PI 3.1415926
-/**
- *      y
- *      ↑
- *      |
- *      |
- *      |__________ x 项目的坐标系
- *
- */
+
 vector<NestPath> *nfpRect;
 
-double GeometryUtil::m_tol = pow(10, -2);
+double GeometryUtil::tol = pow(10, -2);
 
-bool GeometryUtil::AlmostEqual(double a, double b)
+bool GeometryUtil::almostEqual(double a, double b)
 {
-	return abs(a - b) < m_tol;
+    return abs(a - b) < tol;
 }
 
-bool GeometryUtil::AlmostEqual(double a, double b, double tolerance)
+bool GeometryUtil::almostEqual(double a, double b, double tolerance)
 {
 	return abs(a - b) < tolerance;
 }
 
-/**
-	* 计算多边形面积
-	* @param polygon
-	* @return
-	*/
-double GeometryUtil::PolygonArea(NestPath polygon)
+double GeometryUtil::polygonArea(NestPath polygon)
 {
 	double area = 0;
 	for (int i = 0, j = polygon.Size() - 1; i < polygon.Size(); j = i++) 
 	{
 		Segments si = polygon.GetSegments()->at(i);
 		Segments sj = polygon.GetSegments()->at(j);
-		area += (sj.GetX() + si.GetX()) * (sj.GetY() - si.GetY());
+        area += (sj.getX() + si.getX()) * (sj.getY() - si.getY());
 	}
 	return 0.5*area;
 }
 
-/**
-	* 判断点P是否在边AB上
-	* @param A
-	* @param B
-	* @param p
-	* @return
-	*/
-bool GeometryUtil::OnSegment(Segments A, Segments B, Segments p)
+bool GeometryUtil::onSegment(Segments A, Segments B, Segments p)
 {
-	// vertical line
-	if (AlmostEqual(A.m_x, B.m_x) && AlmostEqual(p.m_x, A.m_x))
+    if (almostEqual(A.x, B.x) && almostEqual(p.x, A.x))
 	{
-		if (!AlmostEqual(p.m_y, B.m_y) && !AlmostEqual(p.m_y, A.m_y) && p.m_y < max(B.m_y, A.m_y) && p.m_y > min(B.m_y, A.m_y))
+        if (!almostEqual(p.y, B.y) && !almostEqual(p.y, A.y) && p.y < max(B.y, A.y) && p.y > min(B.y, A.y))
 		{
 			return true;
 		}
@@ -61,10 +41,9 @@ bool GeometryUtil::OnSegment(Segments A, Segments B, Segments p)
 		}
 	}
 
-	// horizontal line
-	if (AlmostEqual(A.m_y, B.m_y) && AlmostEqual(p.m_y, A.m_y))
+    if (almostEqual(A.y, B.y) && almostEqual(p.y, A.y))
 	{
-		if (!AlmostEqual(p.m_x, B.m_x) && !AlmostEqual(p.m_x, A.m_x) && p.m_x < max(B.m_x, A.m_x) && p.m_x > min(B.m_x, A.m_x))
+        if (!almostEqual(p.x, B.x) && !almostEqual(p.x, A.x) && p.x < max(B.x, A.x) && p.x > min(B.x, A.x))
 		{
 			return true;
 		}
@@ -74,203 +53,165 @@ bool GeometryUtil::OnSegment(Segments A, Segments B, Segments p)
 		}
 	}
 
-	//range check
-	if ((p.m_x < A.m_x && p.m_x < B.m_x) || (p.m_x > A.m_x && p.m_x > B.m_x) || (p.m_y < A.m_y && p.m_y < B.m_y) || (p.m_y > A.m_y && p.m_y > B.m_y))
+    if ((p.x < A.x && p.x < B.x) || (p.x > A.x && p.x > B.x) || (p.y < A.y && p.y < B.y) || (p.y > A.y && p.y > B.y))
 	{
 		return false;
 	}
 
 
-	// exclude end points
-	if ((AlmostEqual(p.m_x, A.m_x) && AlmostEqual(p.m_y, A.m_y)) || (AlmostEqual(p.m_x, B.m_x) && AlmostEqual(p.m_y, B.m_y)))
+    if ((almostEqual(p.x, A.x) && almostEqual(p.y, A.y)) || (almostEqual(p.x, B.x) && almostEqual(p.y, B.y)))
 	{
 		return false;
 	}
 
-	double cross = (p.m_y - A.m_y) * (B.m_x - A.m_x) - (p.m_x - A.m_x) * (B.m_y - A.m_y);
+    double cross = (p.y - A.y) * (B.x - A.x) - (p.x - A.x) * (B.y - A.y);
 
-	if (abs(cross) > m_tol)
+    if (abs(cross) > tol)
 	{
 		return false;
 	}
 
-	double dot = (p.m_x - A.m_x) * (B.m_x - A.m_x) + (p.m_y - A.m_y)*(B.m_y - A.m_y);
+    double dot = (p.x - A.x) * (B.x - A.x) + (p.y - A.y)*(B.y - A.y);
 
-
-
-	if (dot < 0 || AlmostEqual(dot, 0)) 
+    if (dot < 0 || almostEqual(dot, 0))
 	{
 		return false;
 	}
 
-	double len2 = (B.m_x - A.m_x)*(B.m_x - A.m_x) + (B.m_y - A.m_y)*(B.m_y - A.m_y);
+    double len2 = (B.x - A.x)*(B.x - A.x) + (B.y - A.y)*(B.y - A.y);
 
-
-
-	if (dot > len2 || AlmostEqual(dot, len2)) 
+    if (dot > len2 || almostEqual(dot, len2))
 	{
 		return false;
 	}
 
 	return true;
-
 }
 
-/**
-	* 判断点P是否在多边形polygon上
-	* @param point
-	* @param polygon
-	* @return
-	*/
-bool GeometryUtil::PointInPolygon(Segments point, NestPath polygon)
+bool GeometryUtil::pointInPolygon(Segments point, NestPath polygon)
 {
 	bool inside = false;
-	double offsetx = polygon.m_offsetX;
-	double offsety = polygon.m_offsetY;
+    double offsetX = polygon.offsetX;
+    double offsetY = polygon.offsetY;
 
 	for (int i = 0, j = polygon.Size() - 1; i < polygon.Size(); j = i++) 
 	{
-		double xi = polygon.Get(i).m_x + offsetx;
-		double yi = polygon.Get(i).m_y + offsety;
-		double xj = polygon.Get(j).m_x + offsetx;
-		double yj = polygon.Get(j).m_y + offsety;
+        double xi = polygon.Get(i).x + offsetX;
+        double yi = polygon.Get(i).y + offsetY;
+        double xj = polygon.Get(j).x + offsetX;
+        double yj = polygon.Get(j).y + offsetY;
 
-		if (AlmostEqual(xi, point.m_x) && AlmostEqual(yi, point.m_y))
+        if (almostEqual(xi, point.x) && almostEqual(yi, point.y))
 		{
 			return inside; // no result
 		}
 
-		if (OnSegment(Segments(xi, yi), Segments(xj, yj), point)) 
+        if (onSegment(Segments(xi, yi), Segments(xj, yj), point))
 		{
 			return inside; // exactly on the Segments
 		}
 
-		if (AlmostEqual(xi, xj) && AlmostEqual(yi, yj)) { // ignore very small lines
+        if (almostEqual(xi, xj) && almostEqual(yi, yj)) { // ignore very small lines
 			continue;
 		}
 
-		bool intersect = ((yi > point.m_y) != (yj > point.m_y)) && (point.m_x < (xj - xi) * (point.m_y - yi) / (yj - yi) + xi);
+        bool intersect = ((yi > point.y) != (yj > point.y)) && (point.x < (xj - xi) * (point.y - yi) / (yj - yi) + xi);
 		if (intersect)
 		{
 			inside = !inside;
 		}
 	}
-
 	return inside;
 }
 
-/**
-	* 获取多边形边界
-	* @param polygon
-	* @return
-	*/
-Bound GeometryUtil::GetPolygonBounds(NestPath polygon)
+Bound GeometryUtil::getPolygonBounds(NestPath polygon)
 {
-
-	double xmin = polygon.GetSegments()->at(0).GetX();
-	double xmax = polygon.GetSegments()->at(0).GetX();
-	double ymin = polygon.GetSegments()->at(0).GetY();
-	double ymax = polygon.GetSegments()->at(0).GetY();
+    double minX = polygon.GetSegments()->at(0).getX();
+    double maxX = polygon.GetSegments()->at(0).getX();
+    double minY = polygon.GetSegments()->at(0).getY();
+    double maxY = polygon.GetSegments()->at(0).getY();
 
 	for (int i = 1; i < polygon.GetSegments()->size(); i++)
 	{
-		double x = polygon.GetSegments()->at(i).GetX();
-		double y = polygon.GetSegments()->at(i).GetY();
-		if (x > xmax) 
+        double x = polygon.GetSegments()->at(i).getX();
+        double y = polygon.GetSegments()->at(i).getY();
+        if (x > maxX)
 		{
-			xmax = x;
+            maxX = x;
 		}
-		else if (x < xmin) 
+        else if (x < minX)
 		{
-			xmin = x;
+            minX = x;
 		}
 
-		if (y > ymax) 
+        if (y > maxY)
 		{
-			ymax = y;
+            maxY = y;
 		}
-		else if (y < ymin) 
+        else if (y < minY)
 		{
-			ymin = y;
+            minY = y;
 		}
 	}
-	return Bound(xmin, ymin, xmax - xmin, ymax - ymin);
+    return Bound(minX, minY, maxX - minX, maxY - minY);
 }
 
-/**
-	* 将多边形旋转一定角度后，返回旋转后多边形的边界
-	* @param polygon
-	* @param angle
-	* @return
-	*/
-Bound GeometryUtil::RotatePolygon(NestPath polygon, int angle)
+Bound GeometryUtil::rotatePolygon(NestPath polygon, int angle)
 {
 	if (angle == 0) 
 	{
-		return GetPolygonBounds(polygon);
+        return getPolygonBounds(polygon);
 	}
-	double Fangle = angle * PI / 180;
+    double fAngle = angle * PI / 180;
 	NestPath rotated;
 	for (int i = 0; i < polygon.Size(); i++) 
 	{
-		double x = polygon.Get(i).m_x;
-		double y = polygon.Get(i).m_y;
-		double x1 = x * cos(Fangle) - y * sin(Fangle);
-		double y1 = x * sin(Fangle) + y * cos(Fangle);
+        double x = polygon.Get(i).x;
+        double y = polygon.Get(i).y;
+        double x1 = x * cos(fAngle) - y * sin(fAngle);
+        double y1 = x * sin(fAngle) + y * cos(fAngle);
 		rotated.Add(x1, y1);
 	}
-	Bound bounds = GetPolygonBounds(rotated);
+    Bound bounds = getPolygonBounds(rotated);
 	return bounds;
 }
 
-/**
-	* 将多边形旋转一定角度后，返回该旋转后的多边形
-	* @param polygon
-	* @param degrees
-	* @return
-	*/
-NestPath GeometryUtil::RotatePolygon2Polygon(NestPath polygon, int degrees)
+NestPath GeometryUtil::rotatePolygon2Polygon(NestPath polygon, int degrees)
 {
 	NestPath rotated;
 	double angle = degrees * PI / 180;
 	for (int i = 0; i < polygon.Size(); i++) 
 	{
-		double x = polygon.Get(i).m_x;
-		double y = polygon.Get(i).m_y;
-		double x1 = x * cos(angle) - y * sin(angle);
-		double y1 = x * sin(angle) + y * cos(angle);
-		rotated.Add(Segments(x1, y1));
+        double x = polygon.Get(i).x;
+        double y = polygon.Get(i).y;
+        double translateX = x * cos(angle) - y * sin(angle);
+        double translateY = x * sin(angle) + y * cos(angle);
+        rotated.Add(Segments(translateX, translateY));
 	}
-	rotated.m_bid = polygon.m_bid;
-	rotated.SetId(polygon.GetId());
-	rotated.SetSource(polygon.GetSource());
-	if (polygon.GetChildren()->size() > 0)
+    rotated.bid = polygon.bid;
+    rotated.setId(polygon.getId());
+    rotated.setSource(polygon.getSource());
+    if (polygon.getChildren()->size() > 0)
 	{
-		for (int j = 0; j < polygon.GetChildren()->size(); j++)
+        for (int j = 0; j < polygon.getChildren()->size(); j++)
 		{
-			rotated.GetChildren()->push_back(RotatePolygon2Polygon(polygon.GetChildren()->at(j), degrees));
+            rotated.getChildren()->push_back(rotatePolygon2Polygon(polygon.getChildren()->at(j), degrees));
 		}
 	}
 	return rotated;
 }
 
-/**
-	* 判断是否是矩形
-	* @param poly
-	* @param tolerance
-	* @return
-	*/
 bool GeometryUtil::isRectangle(NestPath poly, double tolerance)
 {
-	Bound bb = GetPolygonBounds(poly);
+    Bound bb = getPolygonBounds(poly);
 
 	for (int i = 0; i < poly.Size(); i++) 
 	{
-		if (!AlmostEqual(poly.Get(i).m_x, bb.GetXmin(), tolerance) && !AlmostEqual(poly.Get(i).m_x, bb.GetXmin() + bb.GetWidth(), tolerance))
+        if (!almostEqual(poly.Get(i).x, bb.getMinX(), tolerance) && !almostEqual(poly.Get(i).x, bb.getMinX() + bb.getWidth(), tolerance))
 		{
 			return false;
 		}
-		if (!AlmostEqual(poly.Get(i).m_y, bb.GetYmin(), tolerance) && !AlmostEqual(poly.Get(i).m_y, bb.GetYmin() + bb.GetHeight(), tolerance))
+        if (!almostEqual(poly.Get(i).y, bb.getMinY(), tolerance) && !almostEqual(poly.Get(i).y, bb.getMinY() + bb.getHeight(), tolerance))
 		{
 			return false;
 		}
@@ -278,82 +219,73 @@ bool GeometryUtil::isRectangle(NestPath poly, double tolerance)
 	return true;
 }
 
-/**
-	* 构建NFP
-	* @param A
-	* @param B
-	* @param inside
-	* @param searchEdges
-	* @return
-	*/
-vector<NestPath> GeometryUtil::NoFitPolygon(NestPath A, NestPath B, bool inside, bool searchEdges)
+vector<NestPath> GeometryUtil::noFitPolygon(NestPath A, NestPath B, bool inside, bool searchEdges)
 {
-	A.SetOffsetX(0);
-	A.SetOffsetY(0);
+    A.setOffsetX(0);
+    A.setOffsetY(0);
 
-	double minA = A.Get(0).m_y;
+    double minA = A.Get(0).y;
 	int minAIndex = 0;
-	double currentAX = A.Get(0).m_x;
-	double maxB = B.Get(0).m_y;
+    double currentAX = A.Get(0).x;
+    double maxB = B.Get(0).y;
 	int maxBIndex = 0;
 
 	for (int i = 1; i < A.Size(); i++) 
 	{
-		A.Get(i).m_marked = false;
+        A.Get(i).marked = false;
 		
-		if (AlmostEqual(A.Get(i).m_y, minA) && A.Get(i).m_x < currentAX)
+        if (almostEqual(A.Get(i).y, minA) && A.Get(i).x < currentAX)
 		{
-			minA = A.Get(i).m_y;
+            minA = A.Get(i).y;
 			minAIndex = i;
-			currentAX = A.Get(i).m_x;
+            currentAX = A.Get(i).x;
 		}
-		else if (A.Get(i).m_y < minA)
+        else if (A.Get(i).y < minA)
 		{
-			minA = A.Get(i).m_y;
+            minA = A.Get(i).y;
 			minAIndex = i;
-			currentAX = A.Get(i).m_x;
+            currentAX = A.Get(i).x;
 		}
 	}
 	for (int i = 1; i < B.Size(); i++) 
 	{
-		B.Get(i).m_marked = false;
-		if (B.Get(i).m_y > maxB)
+        B.Get(i).marked = false;
+        if (B.Get(i).y > maxB)
 		{
-			maxB = B.Get(i).m_y;
+            maxB = B.Get(i).y;
 			maxBIndex = i;
 		}
 	}
 	Segments *startPoint = NULL;
 	if (!inside) 
 	{
-		startPoint = new Segments(A.Get(minAIndex).m_x - B.Get(maxBIndex).m_x,
-			A.Get(minAIndex).m_y - B.Get(maxBIndex).m_y);
+        startPoint = new Segments(A.Get(minAIndex).x - B.Get(maxBIndex).x,
+            A.Get(minAIndex).y - B.Get(maxBIndex).y);
 
 	}
 	else 
 	{
-		//TODO heuristic for inside
-		vector<NestPath> temp_vec;
-		startPoint = SearchStartPoint(A, B, true, temp_vec);
+        vector<NestPath> nestPathList;
+        startPoint = searchStartPoint(A, B, true, nestPathList);
 
 	}
 
-	vector<NestPath> *NFPlist = new vector<NestPath>();
+    vector<NestPath> *nfpList = new vector<NestPath>();
 
 	while (startPoint != NULL)
 	{
-		Segments *prevvector = NULL;
-		B.SetOffsetX(startPoint->m_x);
-		B.SetOffsetY(startPoint->m_y);
+        Segments *prevVector = NULL;
+        B.setOffsetX(startPoint->x);
+        B.setOffsetY(startPoint->y);
 
 
 		vector<SegmentRelation> *touching;
 		NestPath* NFP = new NestPath();
-		NFP->Add(Segments(B.Get(0).m_x + B.GetOffsetX(),
-			B.Get(0).m_y + B.GetOffsetY()));
+        NFP->Add(Segments(B.Get(0).x + B.getOffsetX(),
+            B.Get(0).y + B.getOffsetY()));
 
-		double referenceX = B.Get(0).m_x + B.GetOffsetX();
-		double referenceY = B.Get(0).m_y + B.GetOffsetY();
+        double referenceX = B.Get(0).x + B.getOffsetX();
+        double referenceY = B.Get(0).y + B.getOffsetY();
 		double startX = referenceX;
 		double startY = referenceY;
 		int counter = 0;
@@ -369,16 +301,16 @@ vector<NestPath> GeometryUtil::NoFitPolygon(NestPath A, NestPath B, bool inside,
 				int nexti = (i == A.Size() - 1) ? 0 : i + 1;
 				for (int j = 0; j < B.Size(); j++) {
 					int nextj = (j == B.Size() - 1) ? 0 : j + 1;
-					if (AlmostEqual(A.Get(i).m_x, B.Get(j).m_x + B.m_offsetX) && AlmostEqual(A.Get(i).m_y, B.Get(j).m_y + B.m_offsetY))
+                    if (almostEqual(A.Get(i).x, B.Get(j).x + B.offsetX) && almostEqual(A.Get(i).y, B.Get(j).y + B.offsetY))
 					{
 						touching->push_back(SegmentRelation(0, i, j));
 					}
-					else if (OnSegment(A.Get(i), A.Get(nexti), Segments(B.Get(j).m_x + B.m_offsetX, B.Get(j).m_y + B.m_offsetY)))
+                    else if (onSegment(A.Get(i), A.Get(nexti), Segments(B.Get(j).x + B.offsetX, B.Get(j).y + B.offsetY)))
 					{
 						touching->push_back(SegmentRelation(1, nexti, j));
 					}
-					else if (OnSegment(Segments(B.Get(j).m_x + B.m_offsetX, B.Get(j).m_y + B.m_offsetY),
-						Segments(B.Get(nextj).m_x + B.m_offsetX, B.Get(nextj).m_y + B.m_offsetY),
+                    else if (onSegment(Segments(B.Get(j).x + B.offsetX, B.Get(j).y + B.offsetY),
+                        Segments(B.Get(nextj).x + B.offsetX, B.Get(nextj).y + B.offsetY),
 						A.Get(i))) 
 					{
 						touching->push_back(SegmentRelation(2, i, nextj));
@@ -390,11 +322,11 @@ vector<NestPath> GeometryUtil::NoFitPolygon(NestPath A, NestPath B, bool inside,
 			NestPath *vectors = new NestPath();
 			for (int i = 0; i < touching->size(); i++)
 			{
-				Segments vertexA = A.Get(touching->at(i).m_a);
-				vertexA.m_marked = true;
+                Segments vertexA = A.Get(touching->at(i).a);
+                vertexA.marked = true;
 
-				int prevAIndex = touching->at(i).m_a - 1;
-				int nextAIndex = touching->at(i).m_a + 1;
+                int prevAIndex = touching->at(i).a - 1;
+                int nextAIndex = touching->at(i).a + 1;
 
 				prevAIndex = (prevAIndex < 0) ? A.Size() - 1 : prevAIndex; // loop
 				nextAIndex = (nextAIndex >= A.Size()) ? 0 : nextAIndex; // loop
@@ -402,10 +334,10 @@ vector<NestPath> GeometryUtil::NoFitPolygon(NestPath A, NestPath B, bool inside,
 				Segments prevA = A.Get(prevAIndex);
 				Segments nextA = A.Get(nextAIndex);
 
-				Segments vertexB = B.Get(touching->at(i).m_b);
+                Segments vertexB = B.Get(touching->at(i).b);
 
-				int prevBIndex = touching->at(i).m_b - 1;
-				int nextBIndex = touching->at(i).m_b + 1;
+                int prevBIndex = touching->at(i).b - 1;
+                int nextBIndex = touching->at(i).b + 1;
 
 				prevBIndex = (prevBIndex < 0) ? B.Size() - 1 : prevBIndex; // loop
 				nextBIndex = (nextBIndex >= B.Size()) ? 0 : nextBIndex; // loop
@@ -413,49 +345,49 @@ vector<NestPath> GeometryUtil::NoFitPolygon(NestPath A, NestPath B, bool inside,
 				Segments prevB = B.Get(prevBIndex);
 				Segments nextB = B.Get(nextBIndex);
 
-				if (touching->at(i).m_type == 0) {
-					Segments vA1(prevA.m_x - vertexA.m_x, prevA.m_y - vertexA.m_y);
-					vA1.m_start = &vertexA; vA1.m_end = &prevA;
+                if (touching->at(i).type == 0) {
+                    Segments vA1(prevA.x - vertexA.x, prevA.y - vertexA.y);
+                    vA1.start = &vertexA; vA1.end = &prevA;
 
-					Segments vA2(nextA.m_x - vertexA.m_x, nextA.m_y - vertexA.m_y);
-					vA2.m_start = &vertexA; vA2.m_end = &nextA;
+                    Segments vA2(nextA.x - vertexA.x, nextA.y - vertexA.y);
+                    vA2.start = &vertexA; vA2.end = &nextA;
 
-					Segments vB1(vertexB.m_x - prevB.m_x, vertexB.m_y - prevB.m_y);
-					vB1.m_start = &prevB; vB1.m_end = &vertexB;
+                    Segments vB1(vertexB.x - prevB.x, vertexB.y - prevB.y);
+                    vB1.start = &prevB; vB1.end = &vertexB;
 
-					Segments vB2(vertexB.m_x - nextB.m_x, vertexB.m_y - nextB.m_y);
-					vB2.m_start = &nextB; vB2.m_end = &vertexB;
+                    Segments vB2(vertexB.x - nextB.x, vertexB.y - nextB.y);
+                    vB2.start = &nextB; vB2.end = &vertexB;
 
 					vectors->Add(vA1);
 					vectors->Add(vA2);
 					vectors->Add(vB1);
 					vectors->Add(vB2);
 				}
-				else if (touching->at(i).m_type == 1)
+                else if (touching->at(i).type == 1)
 				{
 
-					Segments tmp(vertexA.m_x - (vertexB.m_x + B.m_offsetX),
-						vertexA.m_y - (vertexB.m_y + B.m_offsetY));
+                    Segments tmp(vertexA.x - (vertexB.x + B.offsetX),
+                        vertexA.y - (vertexB.y + B.offsetY));
 
-					tmp.m_start = &prevA;
-					tmp.m_end = &vertexA;
+                    tmp.start = &prevA;
+                    tmp.end = &vertexA;
 
-					Segments tmp2(prevA.m_x - (vertexB.m_x + B.m_offsetX), prevA.m_y - (vertexB.m_y + B.m_offsetY));
-					tmp2.m_start = &vertexA; tmp2.m_end = &prevA;
+                    Segments tmp2(prevA.x - (vertexB.x + B.offsetX), prevA.y - (vertexB.y + B.offsetY));
+                    tmp2.start = &vertexA; tmp2.end = &prevA;
 					vectors->Add(tmp);
 					vectors->Add(tmp2);
 
 				}
-				else if (touching->at(i).m_type == 2)
+                else if (touching->at(i).type == 2)
 				{
-					Segments tmp1(vertexA.m_x - (vertexB.m_x + B.m_offsetX),
-						vertexA.m_y - (vertexB.m_y + B.m_offsetY));
-					tmp1.m_start = &prevB;
-					tmp1.m_end = &vertexB;
-					Segments tmp2(vertexA.m_x - (prevB.m_x + B.m_offsetX),
-						vertexA.m_y - (prevB.m_y + B.m_offsetY));
-					tmp2.m_start = &vertexB;
-					tmp2.m_end = &prevB;
+                    Segments tmp1(vertexA.x - (vertexB.x + B.offsetX),
+                        vertexA.y - (vertexB.y + B.offsetY));
+                    tmp1.start = &prevB;
+                    tmp1.end = &vertexB;
+                    Segments tmp2(vertexA.x - (prevB.x + B.offsetX),
+                        vertexA.y - (prevB.y + B.offsetY));
+                    tmp2.start = &vertexB;
+                    tmp2.end = &prevB;
 
 					vectors->Add(tmp1); vectors->Add(tmp2);
 				}
@@ -466,37 +398,37 @@ vector<NestPath> GeometryUtil::NoFitPolygon(NestPath A, NestPath B, bool inside,
 			double maxd = 0.0;
 			for (int i = 0; i < vectors->Size(); i++)
 			{
-				if (AlmostEqual(vectors->Get(i).m_x, 0) && AlmostEqual(vectors->Get(i).m_y, 0))
+                if (almostEqual(vectors->Get(i).x, 0) && almostEqual(vectors->Get(i).y, 0))
 				{
 					continue;
 				}
 
-				if (prevvector != NULL && vectors->Get(i).m_y * prevvector->m_y + vectors->Get(i).m_x * prevvector->m_x < 0)
+                if (prevVector != NULL && vectors->Get(i).y * prevVector->y + vectors->Get(i).x * prevVector->x < 0)
 				{
 
-					double vectorlength = sqrt(vectors->Get(i).m_x*vectors->Get(i).m_x + vectors->Get(i).m_y*vectors->Get(i).m_y);
-					Segments unitv(vectors->Get(i).m_x / vectorlength, vectors->Get(i).m_y / vectorlength);
+                    double vectorLength = sqrt(vectors->Get(i).x*vectors->Get(i).x + vectors->Get(i).y*vectors->Get(i).y);
+                    Segments unitv(vectors->Get(i).x / vectorLength, vectors->Get(i).y / vectorLength);
 
 
-					double prevlength = sqrt(prevvector->m_x*prevvector->m_x + prevvector->m_y*prevvector->m_y);
-					Segments prevunit(prevvector->m_x / prevlength, prevvector->m_y / prevlength);
+                    double prevLength = sqrt(prevVector->x*prevVector->x + prevVector->y*prevVector->y);
+                    Segments prevUnit(prevVector->x / prevLength, prevVector->y / prevLength);
 
 
 					// we need to scale down to unit vectors to normalize vector length. Could also just do a tan here
-					if (abs(unitv.m_y * prevunit.m_x - unitv.m_x * prevunit.m_y) < 0.0001)
+                    if (abs(unitv.y * prevUnit.x - unitv.x * prevUnit.y) < 0.0001)
 					{
 
 						continue;
 					}
 				}
 				//todo polygonSlideDistance
-				double d = PolygonSlideDistance(A, B, vectors->Get(i), true);
+                double d = polygonSlideDistance(A, B, vectors->Get(i), true);
 
-				double vecd2 = vectors->Get(i).m_x*vectors->Get(i).m_x + vectors->Get(i).m_y*vectors->Get(i).m_y;
+                double vecd2 = vectors->Get(i).x*vectors->Get(i).x + vectors->Get(i).y*vectors->Get(i).y;
 
 				if (d == -1 || d * d > vecd2) 
 				{
-					double vecd = sqrt(vectors->Get(i).m_x*vectors->Get(i).m_x + vectors->Get(i).m_y*vectors->Get(i).m_y);
+                    double vecd = sqrt(vectors->Get(i).x*vectors->Get(i).x + vectors->Get(i).y*vectors->Get(i).y);
 					d = vecd;
 				}
 
@@ -508,40 +440,40 @@ vector<NestPath> GeometryUtil::NoFitPolygon(NestPath A, NestPath B, bool inside,
 
 			}
 
-			if (translate == NULL || AlmostEqual(maxd, 0)) 
+            if (translate == NULL || almostEqual(maxd, 0))
 			{
 				// didn't close the loop, something went wrong here
 				if (translate == NULL)
 				{
 
 				}
-				if (AlmostEqual(maxd, 0)) 
+                if (almostEqual(maxd, 0))
 				{
 				}
 				NFP = NULL;
 				break;
 			}
 
-			translate->m_start->m_marked = true;
-			translate->m_end->m_marked = true;
+            translate->start->marked = true;
+            translate->end->marked = true;
 
-			prevvector = translate;
+            prevVector = translate;
 
 
 			// trim
-			double vlength2 = translate->m_x*translate->m_x + translate->m_y*translate->m_y;
-			if (maxd*maxd < vlength2 && !AlmostEqual(maxd*maxd, vlength2)) 
+            double vLength2 = translate->x*translate->x + translate->y*translate->y;
+            if (maxd*maxd < vLength2 && !almostEqual(maxd*maxd, vLength2))
 			{
-				double scale = sqrt((maxd*maxd) / vlength2);
-				translate->m_x *= scale;
-				translate->m_y *= scale;
+                double scale = sqrt((maxd*maxd) / vLength2);
+                translate->x *= scale;
+                translate->y *= scale;
 			}
 
-			referenceX += translate->m_x;
-			referenceY += translate->m_y;
+            referenceX += translate->x;
+            referenceY += translate->y;
 
 
-			if (AlmostEqual(referenceX, startX) && AlmostEqual(referenceY, startY)) 
+            if (almostEqual(referenceX, startX) && almostEqual(referenceY, startY))
 			{
 				// we've made a full loop
 				break;
@@ -553,7 +485,7 @@ vector<NestPath> GeometryUtil::NoFitPolygon(NestPath A, NestPath B, bool inside,
 			{
 				for (int i = 0; i < NFP->Size() - 1; i++)
 				{
-					if (AlmostEqual(referenceX, NFP->Get(i).m_x) && AlmostEqual(referenceY, NFP->Get(i).m_y))
+                    if (almostEqual(referenceX, NFP->Get(i).x) && almostEqual(referenceY, NFP->Get(i).y))
 					{
 						looped = true;
 					}
@@ -568,14 +500,14 @@ vector<NestPath> GeometryUtil::NoFitPolygon(NestPath A, NestPath B, bool inside,
 
 			NFP->Add(Segments(referenceX, referenceY));
 
-			B.m_offsetX += translate->m_x;
-			B.m_offsetY += translate->m_y;
+            B.offsetX += translate->x;
+            B.offsetY += translate->y;
 			counter++;
 		}
 
 		if (NFP != NULL && NFP->Size() > 0) 
 		{
-			NFPlist->push_back(*NFP);
+            nfpList->push_back(*NFP);
 		}
 
 		if (!searchEdges) 
@@ -583,12 +515,12 @@ vector<NestPath> GeometryUtil::NoFitPolygon(NestPath A, NestPath B, bool inside,
 			// only get outer NFP or first inner NFP
 			break;
 		}
-		startPoint = SearchStartPoint(A, B, inside, *NFPlist);
+        startPoint = searchStartPoint(A, B, inside, *nfpList);
 	}
-	return *NFPlist;
+    return *nfpList;
 }
 
-Segments* GeometryUtil::SearchStartPoint(NestPath CA, NestPath CB, bool inside, vector<NestPath> NFP) 
+Segments* GeometryUtil::searchStartPoint(NestPath CA, NestPath CB, bool inside, vector<NestPath> NFP)
 {
 
 	NestPath A(CA);
@@ -606,42 +538,42 @@ Segments* GeometryUtil::SearchStartPoint(NestPath CA, NestPath CB, bool inside, 
 
 	for (int i = 0; i < A.Size() - 1; i++)
 	{
-		if (!A.Get(i).m_marked)
+        if (!A.Get(i).marked)
 		{
-			A.Get(i).m_marked = true;
+            A.Get(i).marked = true;
 			for (int j = 0; j < B.Size(); j++)
 			{
-				B.m_offsetX = A.Get(i).m_x - B.Get(j).m_x;
-				B.m_offsetY = A.Get(i).m_y - B.Get(j).m_y;
-				bool Binside = false;
+                B.offsetX = A.Get(i).x - B.Get(j).x;
+                B.offsetY = A.Get(i).y - B.Get(j).y;
+                bool bInside = false;
 				for (int k = 0; k < B.Size(); k++)
 				{
-					bool inpoly = PointInPolygon(Segments(B.Get(k).m_x + B.m_offsetX, B.Get(k).m_y + B.m_offsetY), A);
+                    bool inpoly = pointInPolygon(Segments(B.Get(k).x + B.offsetX, B.Get(k).y + B.offsetY), A);
 					//if (inpoly != null) 
 					{
-						Binside = inpoly;
+                        bInside = inpoly;
 						break;
 					}
 				}
 
-				if (Binside == false) 
+                if (bInside == false)
 				{ // A and B are the same
 					return NULL;
 				}
 
-				Segments* startPoint = new Segments(B.m_offsetX, B.m_offsetY);
+                Segments* startPoint = new Segments(B.offsetX, B.offsetY);
 
-				if (((Binside != false && inside) || (Binside == false && !inside)) && !Intersect(A, B) && !InNfp(*startPoint, NFP))
+                if (((bInside != false && inside) || (bInside == false && !inside)) && !intersect(A, B) && !inNfp(*startPoint, NFP))
 				{
 					return startPoint;
 				}
 
 				// slide B along vector
-				double vx = A.Get(i + 1).m_x - A.Get(i).m_x;
-				double vy = A.Get(i + 1).m_y - A.Get(i).m_y;
+                double vx = A.Get(i + 1).x - A.Get(i).x;
+                double vy = A.Get(i + 1).y - A.Get(i).y;
 
-				double d1 = PolygonProjectionDistance(A, B, Segments(vx, vy));
-				double d2 = PolygonProjectionDistance(B, A, Segments(-vx, -vy));
+                double d1 = polygonProjectionDistance(A, B, Segments(vx, vy));
+                double d2 = polygonProjectionDistance(B, A, Segments(-vx, -vy));
 
 				double d = -1;
 
@@ -665,7 +597,7 @@ Segments* GeometryUtil::SearchStartPoint(NestPath CA, NestPath CB, bool inside, 
 
 				// only slide until no longer negative
 				// todo: clean this up
-				if (d != -1 && !AlmostEqual(d, 0) && d > 0) 
+                if (d != -1 && !almostEqual(d, 0) && d > 0)
 				{
 
 				}
@@ -676,27 +608,27 @@ Segments* GeometryUtil::SearchStartPoint(NestPath CA, NestPath CB, bool inside, 
 
 				double vd2 = vx * vx + vy * vy;
 
-				if (d*d < vd2 && !AlmostEqual(d*d, vd2)) 
+                if (d*d < vd2 && !almostEqual(d*d, vd2))
 				{
 					double vd = sqrt(vx*vx + vy * vy);
 					vx *= d / vd;
 					vy *= d / vd;
 				}
 
-				B.m_offsetX += vx;
-				B.m_offsetY += vy;
+                B.offsetX += vx;
+                B.offsetY += vy;
 
 				for (int k = 0; k < B.Size(); k++)
 				{
-					bool inpoly = PointInPolygon(Segments(B.Get(k).m_x + B.m_offsetX, B.Get(k).m_y + B.m_offsetY), A);
+                    bool inpoly = pointInPolygon(Segments(B.Get(k).x + B.offsetX, B.Get(k).y + B.offsetY), A);
 					//if (inpoly != null) 
 					{
-						Binside = inpoly;
+                        bInside = inpoly;
 						break;
 					}
 				}
-				startPoint = new Segments(B.m_offsetX, B.m_offsetY);
-				if (((Binside && inside) || (!Binside && !inside)) && !Intersect(A, B) && !InNfp(*startPoint, NFP)) 
+                startPoint = new Segments(B.offsetX, B.offsetY);
+                if (((bInside && inside) || (!bInside && !inside)) && !intersect(A, B) && !inNfp(*startPoint, NFP))
 				{
 					return startPoint;
 				}
@@ -706,14 +638,7 @@ Segments* GeometryUtil::SearchStartPoint(NestPath CA, NestPath CB, bool inside, 
 	return NULL;
 }
 
-
-/**
-	*
-	* @param p
-	* @param nfp
-	* @return
-	*/
-bool GeometryUtil::InNfp(Segments p, vector<NestPath>& nfp)
+bool GeometryUtil::inNfp(Segments p, vector<NestPath>& nfp)
 {
 	if (nfp.empty()) 
 	{
@@ -723,7 +648,7 @@ bool GeometryUtil::InNfp(Segments p, vector<NestPath>& nfp)
 	{
 		for (int j = 0; j < nfp.at(i).Size(); j++)
 		{
-			if (AlmostEqual(p.m_x, nfp.at(i).Get(j).m_x) && AlmostEqual(p.m_y, nfp.at(i).Get(j).m_y))
+            if (almostEqual(p.x, nfp.at(i).Get(j).x) && almostEqual(p.y, nfp.at(i).Get(j).y))
 			{
 				return true;
 			}
@@ -732,13 +657,13 @@ bool GeometryUtil::InNfp(Segments p, vector<NestPath>& nfp)
 	return false;
 }
 
-double GeometryUtil::PolygonProjectionDistance(NestPath CA, NestPath CB, Segments direction) 
+double GeometryUtil::polygonProjectionDistance(NestPath CA, NestPath CB, Segments direction)
 {
-	double Boffsetx = CB.m_offsetX;
-	double Boffsety = CB.m_offsetY;
+    double bOffsetx = CB.offsetX;
+    double bOffsety = CB.offsetY;
 
-	double Aoffsetx = CA.m_offsetX;
-	double Aoffsety = CA.m_offsetY;
+    double aOffsetx = CA.offsetX;
+    double aOffsety = CA.offsetY;
 
 	NestPath A(CA);
 	NestPath B(CB);
@@ -762,42 +687,42 @@ double GeometryUtil::PolygonProjectionDistance(NestPath CA, NestPath CB, Segment
 	for (int i = 0; i < edgeB.Size(); i++) 
 	{
 		// the shortest/most negative projection of B onto A
-		double minprojection = -1;
-		Segments minp;
+        double minProjection = -1;
+        Segments minP;
 		for (int j = 0; j < edgeA.Size() - 1; j++) 
 		{
-			p = Segments(edgeB.Get(i).m_x + Boffsetx, edgeB.Get(i).m_y + Boffsety);
-			s1 = Segments(edgeA.Get(j).m_x + Aoffsetx, edgeA.Get(j).m_y + Aoffsety);
-			s2 = Segments(edgeA.Get(j + 1).m_x + Aoffsetx, edgeA.Get(j + 1).m_y + Aoffsety);
-			if (abs((s2.m_y - s1.m_y) * direction.m_x - (s2.m_x - s1.m_x) * direction.m_y) < m_tol)
+            p = Segments(edgeB.Get(i).x + bOffsetx, edgeB.Get(i).y + bOffsety);
+            s1 = Segments(edgeA.Get(j).x + aOffsetx, edgeA.Get(j).y + aOffsety);
+            s2 = Segments(edgeA.Get(j + 1).x + aOffsetx, edgeA.Get(j + 1).y + aOffsety);
+            if (abs((s2.y - s1.y) * direction.x - (s2.x - s1.x) * direction.y) < tol)
 			{
 				continue;
 			}
 
 			// project point, ignore edge boundaries
-			d = PointDistance(p, s1, s2, direction, false);
+            d = pointDistance(p, s1, s2, direction, false);
 
-			if (d != -1 && (minprojection == -1 || d < minprojection)) 
+            if (d != -1 && (minProjection == -1 || d < minProjection))
 			{
-				minprojection = d;
-				minp = p;
+                minProjection = d;
+                minP = p;
 			}
 		}
-		if (minprojection != -1 && (distance == -1 || minprojection > distance)) 
+        if (minProjection != -1 && (distance == -1 || minProjection > distance))
 		{
-			distance = minprojection;
+            distance = minProjection;
 		}
 	}
 	return distance;
 }
 
-bool GeometryUtil::Intersect(NestPath CA, NestPath CB) 
+bool GeometryUtil::intersect(NestPath CA, NestPath CB)
 {
-	double Aoffsetx = CA.m_offsetX;
-	double Aoffsety = CA.m_offsetY;
+    double aOffsetx = CA.offsetX;
+    double aOffsety = CA.offsetY;
 
-	double Boffsetx = CB.m_offsetX;
-	double Boffsety = CB.m_offsetY;
+    double bOffsetx = CB.offsetX;
+    double bOffsety = CB.offsetY;
 
 	NestPath A(CA);
 	NestPath B(CB);
@@ -806,51 +731,51 @@ bool GeometryUtil::Intersect(NestPath CA, NestPath CB)
 	{
 		for (int j = 0; j < B.Size() - 1; j++)
 		{
-			Segments a1(A.Get(i).m_x + Aoffsetx, A.Get(i).m_y + Aoffsety);
-			Segments a2(A.Get(i + 1).m_x + Aoffsetx, A.Get(i + 1).m_y + Aoffsety);
-			Segments b1(B.Get(j).m_x + Boffsetx, B.Get(j).m_y + Boffsety);
-			Segments b2(B.Get(j + 1).m_x + Boffsetx, B.Get(j + 1).m_y + Boffsety);
+            Segments a1(A.Get(i).x + aOffsetx, A.Get(i).y + aOffsety);
+            Segments a2(A.Get(i + 1).x + aOffsetx, A.Get(i + 1).y + aOffsety);
+            Segments b1(B.Get(j).x + bOffsetx, B.Get(j).y + bOffsety);
+            Segments b2(B.Get(j + 1).x + bOffsetx, B.Get(j + 1).y + bOffsety);
 
 
-			int prevbindex = (j == 0) ? B.Size() - 1 : j - 1;
-			int prevaindex = (i == 0) ? A.Size() - 1 : i - 1;
-			int nextbindex = (j + 1 == B.Size() - 1) ? 0 : j + 2;
-			int nextaindex = (i + 1 == A.Size() - 1) ? 0 : i + 2;
+            int prevBIndex = (j == 0) ? B.Size() - 1 : j - 1;
+            int prevAIndex = (i == 0) ? A.Size() - 1 : i - 1;
+            int nextBIndex = (j + 1 == B.Size() - 1) ? 0 : j + 2;
+            int nextAIndex = (i + 1 == A.Size() - 1) ? 0 : i + 2;
 
 			// go even further back if we happen to hit on a loop end point
-			if (B.Get(prevbindex) == B.Get(j) || (AlmostEqual(B.Get(prevbindex).m_x, B.Get(j).m_x) && AlmostEqual(B.Get(prevbindex).m_y, B.Get(j).m_y)))
+            if (B.Get(prevBIndex) == B.Get(j) || (almostEqual(B.Get(prevBIndex).x, B.Get(j).x) && almostEqual(B.Get(prevBIndex).y, B.Get(j).y)))
 			{
-				prevbindex = (prevbindex == 0) ? B.Size() - 1 : prevbindex - 1;
+                prevBIndex = (prevBIndex == 0) ? B.Size() - 1 : prevBIndex - 1;
 			}
 
-			if (A.Get(prevaindex) == A.Get(i) || (AlmostEqual(A.Get(prevaindex).m_x, A.Get(i).m_x) && AlmostEqual(A.Get(prevaindex).m_y, A.Get(i).m_y)))
+            if (A.Get(prevAIndex) == A.Get(i) || (almostEqual(A.Get(prevAIndex).x, A.Get(i).x) && almostEqual(A.Get(prevAIndex).y, A.Get(i).y)))
 			{
-				prevaindex = (prevaindex == 0) ? A.Size() - 1 : prevaindex - 1;
+                prevAIndex = (prevAIndex == 0) ? A.Size() - 1 : prevAIndex - 1;
 			}
 
 			// go even further forward if we happen to hit on a loop end point
-			if (B.Get(nextbindex) == B.Get(j + 1) || (AlmostEqual(B.Get(nextbindex).m_x, B.Get(j + 1).m_x) && AlmostEqual(B.Get(nextbindex).m_y, B.Get(j + 1).m_y)))
+            if (B.Get(nextBIndex) == B.Get(j + 1) || (almostEqual(B.Get(nextBIndex).x, B.Get(j + 1).x) && almostEqual(B.Get(nextBIndex).y, B.Get(j + 1).y)))
 			{
-				nextbindex = (nextbindex == B.Size() - 1) ? 0 : nextbindex + 1;
+                nextBIndex = (nextBIndex == B.Size() - 1) ? 0 : nextBIndex + 1;
 			}
 
-			if (A.Get(nextaindex) == A.Get(i + 1) || (AlmostEqual(A.Get(nextaindex).m_x, A.Get(i + 1).m_x) && AlmostEqual(A.Get(nextaindex).m_y, A.Get(i + 1).m_y)))
+            if (A.Get(nextAIndex) == A.Get(i + 1) || (almostEqual(A.Get(nextAIndex).x, A.Get(i + 1).x) && almostEqual(A.Get(nextAIndex).y, A.Get(i + 1).y)))
 			{
-				nextaindex = (nextaindex == A.Size() - 1) ? 0 : nextaindex + 1;
+                nextAIndex = (nextAIndex == A.Size() - 1) ? 0 : nextAIndex + 1;
 			}
 
-			Segments a0(A.Get(prevaindex).m_x + Aoffsetx, A.Get(prevaindex).m_y + Aoffsety);
-			Segments b0(B.Get(prevbindex).m_x + Boffsetx, B.Get(prevbindex).m_y + Boffsety);
+            Segments a0(A.Get(prevAIndex).x + aOffsetx, A.Get(prevAIndex).y + aOffsety);
+            Segments b0(B.Get(prevBIndex).x + bOffsetx, B.Get(prevBIndex).y + bOffsety);
 
-			Segments a3(A.Get(nextaindex).m_x + Aoffsetx, A.Get(nextaindex).m_y + Aoffsety);
-			Segments b3(B.Get(nextbindex).m_x + Boffsetx, B.Get(nextbindex).m_y + Boffsety);
+            Segments a3(A.Get(nextAIndex).x + aOffsetx, A.Get(nextAIndex).y + aOffsety);
+            Segments b3(B.Get(nextBIndex).x + bOffsetx, B.Get(nextBIndex).y + bOffsety);
 
-			if (OnSegment(a1, a2, b1) || (AlmostEqual(a1.m_x, b1.m_x, 0.01) && AlmostEqual(a1.m_y, b1.m_y, 0.01)))
+            if (onSegment(a1, a2, b1) || (almostEqual(a1.x, b1.x, 0.01) && almostEqual(a1.y, b1.y, 0.01)))
 			{
 				// if a point is on a Segments, it could intersect or it could not. Check via the neighboring points
-				bool b0in = PointInPolygon(b0, A);
-				bool b2in = PointInPolygon(b2, A);
-				if ((b0in == true && b2in == false) || (b0in == false && b2in == true)) 
+                bool b0In = pointInPolygon(b0, A);
+                bool b2In = pointInPolygon(b2, A);
+                if ((b0In == true && b2In == false) || (b0In == false && b2In == true))
 				{
 
 					return true;
@@ -861,12 +786,12 @@ bool GeometryUtil::Intersect(NestPath CA, NestPath CB)
 				}
 			}
 
-			if (OnSegment(a1, a2, b2) || (AlmostEqual(a2.m_x, b2.m_x) && AlmostEqual(a2.m_y, b2.m_y)))
+            if (onSegment(a1, a2, b2) || (almostEqual(a2.x, b2.x) && almostEqual(a2.y, b2.y)))
 			{
 				// if a point is on a Segments, it could intersect or it could not. Check via the neighboring points
-				bool b1in = PointInPolygon(b1, A);
-				bool b3in = PointInPolygon(b3, A);
-				if ((b1in == true && b3in == false) || (b1in == false && b3in == true)) 
+                bool b1In = pointInPolygon(b1, A);
+                bool b3In = pointInPolygon(b3, A);
+                if ((b1In == true && b3In == false) || (b1In == false && b3In == true))
 				{
 
 					return true;
@@ -877,12 +802,12 @@ bool GeometryUtil::Intersect(NestPath CA, NestPath CB)
 				}
 			}
 
-			if (OnSegment(b1, b2, a1) || (AlmostEqual(a1.m_x, b2.m_x) && AlmostEqual(a1.m_y, b2.m_y)))
+            if (onSegment(b1, b2, a1) || (almostEqual(a1.x, b2.x) && almostEqual(a1.y, b2.y)))
 			{
 				// if a point is on a Segments, it could intersect or it could not. Check via the neighboring points
-				bool a0in = PointInPolygon(a0, B);
-				bool a2in = PointInPolygon(a2, B);
-				if ((a0in == true && a2in == false) || (a0in == false && a2in == true)) 
+                bool a0In = pointInPolygon(a0, B);
+                bool a2In = pointInPolygon(a2, B);
+                if ((a0In == true && a2In == false) || (a0In == false && a2In == true))
 				{
 
 					return true;
@@ -893,12 +818,12 @@ bool GeometryUtil::Intersect(NestPath CA, NestPath CB)
 				}
 			}
 
-			if (OnSegment(b1, b2, a2) || (AlmostEqual(a2.m_x, b1.m_x) && AlmostEqual(a2.m_y, b1.m_y)))
+            if (onSegment(b1, b2, a2) || (almostEqual(a2.x, b1.x) && almostEqual(a2.y, b1.y)))
 			{
 				// if a point is on a Segments, it could intersect or it could not. Check via the neighboring points
-				bool a1in = PointInPolygon(a1, B);
-				bool a3in = PointInPolygon(a3, B);
-				if ((a1in == true && a3in == false) || (a1in == false && a3in == true)) 
+                bool a1In = pointInPolygon(a1, B);
+                bool a3In = pointInPolygon(a3, B);
+                if ((a1In == true && a3In == false) || (a1In == false && a3In == true))
 				{
 
 					return true;
@@ -909,7 +834,7 @@ bool GeometryUtil::Intersect(NestPath CA, NestPath CB)
 				}
 			}
 
-			Segments* p = LineIntersect(b1, b2, a1, a2, false);
+            Segments* p = lineIntersect(b1, b2, a1, a2, false);
 
 			if (p != NULL) 
 			{
@@ -922,16 +847,16 @@ bool GeometryUtil::Intersect(NestPath CA, NestPath CB)
 	return false;
 }
 
-Segments* GeometryUtil::LineIntersect(Segments A, Segments B, Segments E, Segments F, bool infinite) 
+Segments* GeometryUtil::lineIntersect(Segments A, Segments B, Segments E, Segments F, bool infinite)
 {
 	double a1, a2, b1, b2, c1, c2, x, y;
 
-	a1 = B.m_y - A.m_y;
-	b1 = A.m_x - B.m_x;
-	c1 = B.m_x*A.m_y - A.m_x*B.m_y;
-	a2 = F.m_y - E.m_y;
-	b2 = E.m_x - F.m_x;
-	c2 = F.m_x*E.m_y - E.m_x*F.m_y;
+    a1 = B.y - A.y;
+    b1 = A.x - B.x;
+    c1 = B.x*A.y - A.x*B.y;
+    a2 = F.y - E.y;
+    b2 = E.x - F.x;
+    c2 = F.x*E.y - E.x*F.y;
 
 	double denom = a1 * b2 - a2 * b1;
 
@@ -947,22 +872,22 @@ Segments* GeometryUtil::LineIntersect(Segments A, Segments B, Segments E, Segmen
 	if (!infinite) 
 	{
 		// coincident points do not count as intersecting
-		if (abs(A.m_x - B.m_x) > m_tol && ((A.m_x < B.m_x) ? x < A.m_x || x > B.m_x : x > A.m_x || x < B.m_x)) return NULL;
-		if (abs(A.m_y - B.m_y) > m_tol && ((A.m_y < B.m_y) ? y < A.m_y || y > B.m_y : y > A.m_y || y < B.m_y)) return NULL;
+        if (abs(A.x - B.x) > tol && ((A.x < B.x) ? x < A.x || x > B.x : x > A.x || x < B.x)) return NULL;
+        if (abs(A.y - B.y) > tol && ((A.y < B.y) ? y < A.y || y > B.y : y > A.y || y < B.y)) return NULL;
 
-		if (abs(E.m_x - F.m_x) > m_tol && ((E.m_x < F.m_x) ? x < E.m_x || x > F.m_x : x > E.m_x || x < F.m_x)) return NULL;
-		if (abs(E.m_y - F.m_y) > m_tol && ((E.m_y < F.m_y) ? y < E.m_y || y > F.m_y : y > E.m_y || y < F.m_y)) return NULL;
+        if (abs(E.x - F.x) > tol && ((E.x < F.x) ? x < E.x || x > F.x : x > E.x || x < F.x)) return NULL;
+        if (abs(E.y - F.y) > tol && ((E.y < F.y) ? y < E.y || y > F.y : y > E.y || y < F.y)) return NULL;
 	}
 	return new Segments(x, y);
 }
 
-double GeometryUtil::PolygonSlideDistance(NestPath TA, NestPath TB, Segments direction, bool ignoreNegative)
+double GeometryUtil::polygonSlideDistance(NestPath TA, NestPath TB, Segments direction, bool ignoreNegative)
 {
-	double Aoffsetx = TA.m_offsetX;
-	double Aoffsety = TA.m_offsetY;
+    double aOffsetX = TA.offsetX;
+    double aOffsetY = TA.offsetY;
 
-	double Boffsetx = TB.m_offsetX;
-	double BoffsetY = TB.m_offsetY;
+    double bOffsetX = TB.offsetX;
+    double bOffsetY = TB.offsetY;
 
 	NestPath A(TA);
 	NestPath B(TB);
@@ -982,31 +907,31 @@ double GeometryUtil::PolygonSlideDistance(NestPath TA, NestPath TB, Segments dir
 	double distance = -1;
 
 
-	Segments dir = NormalizeVector(direction);
+    Segments dir = normalizeVector(direction);
 
-	Segments normal(dir.m_y, -dir.m_x);
+    Segments normal(dir.y, -dir.x);
 
-	Segments reverse(-dir.m_x, -dir.m_y);
+    Segments reverse(-dir.x, -dir.y);
 
 	Segments A1, A2, B1, B2;
 	for (int i = 0; i < edgeB.Size() - 1; i++) 
 	{
 		for (int j = 0; j < edgeA.Size() - 1; j++) 
 		{
-			A1 = Segments(edgeA.Get(j).m_x + Aoffsetx, edgeA.Get(j).m_y + Aoffsety);
-			A2 = Segments(edgeA.Get(j + 1).m_x + Aoffsetx, edgeA.Get(j + 1).m_y + Aoffsety);
-			B1 = Segments(edgeB.Get(i).m_x + Boffsetx, edgeB.Get(i).m_y + BoffsetY);
-			B2 = Segments(edgeB.Get(i + 1).m_x + Boffsetx, edgeB.Get(i + 1).m_y + BoffsetY);
+            A1 = Segments(edgeA.Get(j).x + aOffsetX, edgeA.Get(j).y + aOffsetY);
+            A2 = Segments(edgeA.Get(j + 1).x + aOffsetX, edgeA.Get(j + 1).y + aOffsetY);
+            B1 = Segments(edgeB.Get(i).x + bOffsetX, edgeB.Get(i).y + bOffsetY);
+            B2 = Segments(edgeB.Get(i + 1).x + bOffsetX, edgeB.Get(i + 1).y + bOffsetY);
 
-			if ((AlmostEqual(A1.m_x, A2.m_x) && AlmostEqual(A1.m_y, A2.m_y)) || (AlmostEqual(B1.m_x, B2.m_x) && AlmostEqual(B1.m_y, B2.m_y)))
+            if ((almostEqual(A1.x, A2.x) && almostEqual(A1.y, A2.y)) || (almostEqual(B1.x, B2.x) && almostEqual(B1.y, B2.y)))
 			{
 				continue;
 			}
-			double d = SegmentDistance(A1, A2, B1, B2, dir);
+            double d = segmentDistance(A1, A2, B1, B2, dir);
 
 			if (d != -1 && (distance == -1 || d < distance)) 
 			{
-				if (!ignoreNegative || d > 0 || AlmostEqual(d, 0)) 
+                if (!ignoreNegative || d > 0 || almostEqual(d, 0))
 				{
 					distance = d;
 				}
@@ -1016,98 +941,98 @@ double GeometryUtil::PolygonSlideDistance(NestPath TA, NestPath TB, Segments dir
 	return distance;
 }
 
-Segments GeometryUtil::NormalizeVector(Segments v) 
+Segments GeometryUtil::normalizeVector(Segments v)
 {
-	if (AlmostEqual(v.m_x * v.m_x + v.m_y * v.m_y, 1))
+    if (almostEqual(v.x * v.x + v.y * v.y, 1))
 	{
 		return v;
 	}
-	double len = sqrt(v.m_x * v.m_x + v.m_y *v.m_y);
+    double len = sqrt(v.x * v.x + v.y *v.y);
 	double inverse = 1 / len;
 
-	return Segments(v.m_x * inverse, v.m_y * inverse);
+    return Segments(v.x * inverse, v.y * inverse);
 }
 
-double GeometryUtil::SegmentDistance(Segments A, Segments B, Segments E, Segments F, Segments direction) 
+double GeometryUtil::segmentDistance(Segments A, Segments B, Segments E, Segments F, Segments direction)
 {
-	double SEGTOL = 10E-4;
-	Segments normal(direction.m_y, -direction.m_x);
+    double tolerance = 10E-4;
+    Segments normal(direction.y, -direction.x);
 
-	Segments reverse(-direction.m_x, -direction.m_y);
+    Segments reverse(-direction.x, -direction.y);
 
-	double dotA = A.m_x*normal.m_x + A.m_y*normal.m_y;
-	double dotB = B.m_x*normal.m_x + B.m_y*normal.m_y;
-	double dotE = E.m_x*normal.m_x + E.m_y*normal.m_y;
-	double dotF = F.m_x*normal.m_x + F.m_y*normal.m_y;
+    double dotA = A.x*normal.x + A.y*normal.y;
+    double dotB = B.x*normal.x + B.y*normal.y;
+    double dotE = E.x*normal.x + E.y*normal.y;
+    double dotF = F.x*normal.x + F.y*normal.y;
 
-	double crossA = A.m_x*direction.m_x + A.m_y*direction.m_y;
-	double crossB = B.m_x*direction.m_x + B.m_y*direction.m_y;
-	double crossE = E.m_x*direction.m_x + E.m_y*direction.m_y;
-	double crossF = F.m_x*direction.m_x + F.m_y*direction.m_y;
-	double crossABmin = min(crossA, crossB);
-	double crossABmax = max(crossA, crossB);
+    double crossA = A.x*direction.x + A.y*direction.y;
+    double crossB = B.x*direction.x + B.y*direction.y;
+    double crossE = E.x*direction.x + E.y*direction.y;
+    double crossF = F.x*direction.x + F.y*direction.y;
+    double crossABMin = min(crossA, crossB);
+    double crossABMax = max(crossA, crossB);
 
-	double crossEFmax = max(crossE, crossF);
-	double crossEFmin = min(crossE, crossF);
+    double crossEFMax = max(crossE, crossF);
+    double crossEFMin = min(crossE, crossF);
 
-	double ABmin = min(dotA, dotB);
-	double ABmax = max(dotA, dotB);
+    double ABMin = min(dotA, dotB);
+    double ABMax = max(dotA, dotB);
 
-	double EFmax = max(dotE, dotF);
-	double EFmin = min(dotE, dotF);
+    double EFMax = max(dotE, dotF);
+    double EFMin = min(dotE, dotF);
 
-	if (AlmostEqual(ABmax, EFmin, SEGTOL) || AlmostEqual(ABmin, EFmax, SEGTOL)) 
+    if (almostEqual(ABMax, EFMin, tolerance) || almostEqual(ABMin, EFMax, tolerance))
 	{
 		return -1;
 	}
 	// segments miss eachother completely
-	if (ABmax < EFmin || ABmin > EFmax) 
+    if (ABMax < EFMin || ABMin > EFMax)
 	{
 		return -1;
 	}
 	double overlap;
-	if ((ABmax > EFmax && ABmin < EFmin) || (EFmax > ABmax && EFmin < ABmin)) 
+    if ((ABMax > EFMax && ABMin < EFMin) || (EFMax > ABMax && EFMin < ABMin))
 	{
 		overlap = 1;
 	}
 	else 
 	{
-		double minMax = min(ABmax, EFmax);
-		double maxMin = max(ABmin, EFmin);
+        double minMax = min(ABMax, EFMax);
+        double maxMin = max(ABMin, EFMin);
 
-		double maxMax = max(ABmax, EFmax);
-		double minMin = min(ABmin, EFmin);
+        double maxMax = max(ABMax, EFMax);
+        double minMin = min(ABMin, EFMin);
 
 		overlap = (minMax - maxMin) / (maxMax - minMin);
 	}
-	double crossABE = (E.m_y - A.m_y) * (B.m_x - A.m_x) - (E.m_x - A.m_x) * (B.m_y - A.m_y);
-	double crossABF = (F.m_y - A.m_y) * (B.m_x - A.m_x) - (F.m_x - A.m_x) * (B.m_y - A.m_y);
+    double crossABE = (E.y - A.y) * (B.x - A.x) - (E.x - A.x) * (B.y - A.y);
+    double crossABF = (F.y - A.y) * (B.x - A.x) - (F.x - A.x) * (B.y - A.y);
 
-	if (AlmostEqual(crossABE, 0) && AlmostEqual(crossABF, 0)) 
+    if (almostEqual(crossABE, 0) && almostEqual(crossABF, 0))
 	{
 
-		Segments ABnorm(B.m_y - A.m_y, A.m_x - B.m_x);
-		Segments EFnorm(F.m_y - E.m_y, E.m_x - F.m_x);
+        Segments ABNorm(B.y - A.y, A.x - B.x);
+        Segments EFNorm(F.y - E.y, E.x - F.x);
 
-		double ABnormlength = sqrt(ABnorm.m_x*ABnorm.m_x + ABnorm.m_y*ABnorm.m_y);
-		ABnorm.m_x /= ABnormlength;
-		ABnorm.m_y /= ABnormlength;
+        double ABNormLength = sqrt(ABNorm.x*ABNorm.x + ABNorm.y*ABNorm.y);
+        ABNorm.x /= ABNormLength;
+        ABNorm.y /= ABNormLength;
 
-		double EFnormlength = sqrt(EFnorm.m_x*EFnorm.m_x + EFnorm.m_y*EFnorm.m_y);
-		EFnorm.m_x /= EFnormlength;
-		EFnorm.m_y /= EFnormlength;
+        double EFNormLength = sqrt(EFNorm.x*EFNorm.x + EFNorm.y*EFNorm.y);
+        EFNorm.x /= EFNormLength;
+        EFNorm.y /= EFNormLength;
 
 		// Segments normals must point in opposite directions
-		if (abs(ABnorm.m_y * EFnorm.m_x - ABnorm.m_x * EFnorm.m_y) < SEGTOL && ABnorm.m_y * EFnorm.m_y + ABnorm.m_x * EFnorm.m_x < 0)
+        if (abs(ABNorm.y * EFNorm.x - ABNorm.x * EFNorm.y) < tolerance && ABNorm.y * EFNorm.y + ABNorm.x * EFNorm.x < 0)
 		{
 			// normal of AB Segments must point in same direction as given direction vector
-			double normdot = ABnorm.m_y * direction.m_y + ABnorm.m_x * direction.m_x;
+            double normDot = ABNorm.y * direction.y + ABNorm.x * direction.x;
 			// the segments merely slide along eachother
-			if (AlmostEqual(normdot, 0, SEGTOL)) 
+            if (almostEqual(normDot, 0, tolerance))
 			{
 				return -1;
 			}
-			if (normdot < 0) 
+            if (normDot < 0)
 			{
 				return (double)0;
 			}
@@ -1117,20 +1042,20 @@ double GeometryUtil::SegmentDistance(Segments A, Segments B, Segments E, Segment
 	vector<double> distances;
 
 	// coincident points
-	if (AlmostEqual(dotA, dotE)) 
+    if (almostEqual(dotA, dotE))
 	{
 		distances.push_back(crossA - crossE);
 	}
-	else if (AlmostEqual(dotA, dotF)) 
+    else if (almostEqual(dotA, dotF))
 	{
 		distances.push_back(crossA - crossF);
 	}
-	else if (dotA > EFmin && dotA < EFmax) 
+    else if (dotA > EFMin && dotA < EFMax)
 	{
-		double d = PointDistance(A, E, F, reverse, false);
-		if (d != -1 && AlmostEqual(d, 0)) { //  A currently touches EF, but AB is moving away from EF
-			double dB = PointDistance(B, E, F, reverse, true);
-			if (dB < 0 || AlmostEqual(dB*overlap, 0)) 
+        double d = pointDistance(A, E, F, reverse, false);
+        if (d != -1 && almostEqual(d, 0)) { //  A currently touches EF, but AB is moving away from EF
+            double dB = pointDistance(B, E, F, reverse, true);
+            if (dB < 0 || almostEqual(dB*overlap, 0))
 			{
 				d = -1;
 			}
@@ -1141,22 +1066,22 @@ double GeometryUtil::SegmentDistance(Segments A, Segments B, Segments E, Segment
 		}
 	}
 
-	if (AlmostEqual(dotB, dotE)) 
+    if (almostEqual(dotB, dotE))
 	{
 		distances.push_back(crossB - crossE);
 	}
-	else if (AlmostEqual(dotB, dotF)) 
+    else if (almostEqual(dotB, dotF))
 	{
 		distances.push_back(crossB - crossF);
 	}
-	else if (dotB > EFmin && dotB < EFmax) 
+    else if (dotB > EFMin && dotB < EFMax)
 	{
-		double d = PointDistance(B, E, F, reverse, false);
+        double d = pointDistance(B, E, F, reverse, false);
 
-		if (d != -1 && AlmostEqual(d, 0)) 
+        if (d != -1 && almostEqual(d, 0))
 		{ // crossA>crossB A currently touches EF, but AB is moving away from EF
-			double dA = PointDistance(A, E, F, reverse, true);
-			if (dA < 0 || AlmostEqual(dA*overlap, 0)) 
+            double dA = pointDistance(A, E, F, reverse, true);
+            if (dA < 0 || almostEqual(dA*overlap, 0))
 			{
 				d = -1;
 			}
@@ -1167,13 +1092,13 @@ double GeometryUtil::SegmentDistance(Segments A, Segments B, Segments E, Segment
 		}
 	}
 
-	if (dotE > ABmin && dotE < ABmax) 
+    if (dotE > ABMin && dotE < ABMax)
 	{
-		double d = PointDistance(E, A, B, direction, false);
-		if (d != -1 && AlmostEqual(d, 0)) 
+        double d = pointDistance(E, A, B, direction, false);
+        if (d != -1 && almostEqual(d, 0))
 		{ // crossF<crossE A currently touches EF, but AB is moving away from EF
-			double dF = PointDistance(F, A, B, direction, true);
-			if (dF < 0 || AlmostEqual(dF*overlap, 0)) 
+            double dF = pointDistance(F, A, B, direction, true);
+            if (dF < 0 || almostEqual(dF*overlap, 0))
 			{
 				d = -1;
 			}
@@ -1184,13 +1109,13 @@ double GeometryUtil::SegmentDistance(Segments A, Segments B, Segments E, Segment
 		}
 	}
 
-	if (dotF > ABmin && dotF < ABmax) 
+    if (dotF > ABMin && dotF < ABMax)
 	{
-		double d = PointDistance(F, A, B, direction, false);
-		if (d != -1 && AlmostEqual(d, 0)) 
+        double d = pointDistance(F, A, B, direction, false);
+        if (d != -1 && almostEqual(d, 0))
 		{ // && crossE<crossF A currently touches EF, but AB is moving away from EF
-			double dE = PointDistance(E, A, B, direction, true);
-			if (dE < 0 || AlmostEqual(dE*overlap, 0)) 
+            double dE = pointDistance(E, A, B, direction, true);
+            if (dE < 0 || almostEqual(dE*overlap, 0))
 			{
 				d = -1;
 			}
@@ -1220,106 +1145,100 @@ double GeometryUtil::SegmentDistance(Segments A, Segments B, Segments E, Segment
 	return minElement;
 }
 
-double GeometryUtil::PointDistance(Segments p, Segments s1, Segments s2, Segments normal, bool infinite) 
+double GeometryUtil::pointDistance(Segments p, Segments s1, Segments s2, Segments normal, bool infinite)
 {
-	normal = NormalizeVector(normal);
-	Segments dir(normal.m_y, -normal.m_x);
+    normal = normalizeVector(normal);
+    Segments dir(normal.y, -normal.x);
 
-	double pdot = p.m_x*dir.m_x + p.m_y*dir.m_y;
-	double s1dot = s1.m_x*dir.m_x + s1.m_y*dir.m_y;
-	double s2dot = s2.m_x*dir.m_x + s2.m_y*dir.m_y;
+    double pDot = p.x*dir.x + p.y*dir.y;
+    double s1Dot = s1.x*dir.x + s1.y*dir.y;
+    double s2Dot = s2.x*dir.x + s2.y*dir.y;
 
-	double pdotnorm = p.m_x*normal.m_x + p.m_y*normal.m_y;
-	double s1dotnorm = s1.m_x*normal.m_x + s1.m_y*normal.m_y;
-	double s2dotnorm = s2.m_x*normal.m_x + s2.m_y*normal.m_y;
+    double pDotNorm = p.x*normal.x + p.y*normal.y;
+    double s1DotNorm = s1.x*normal.x + s1.y*normal.y;
+    double s2DotNorm = s2.x*normal.x + s2.y*normal.y;
 
 
 	if (!infinite) 
 	{
-		if (((pdot < s1dot || AlmostEqual(pdot, s1dot)) && (pdot < s2dot || AlmostEqual(pdot, s2dot))) || ((pdot > s1dot || AlmostEqual(pdot, s1dot)) && (pdot > s2dot || AlmostEqual(pdot, s2dot)))) {
+        if (((pDot < s1Dot || almostEqual(pDot, s1Dot)) && (pDot < s2Dot || almostEqual(pDot, s2Dot))) || ((pDot > s1Dot || almostEqual(pDot, s1Dot)) && (pDot > s2Dot || almostEqual(pDot, s2Dot)))) {
 			return -1; // dot doesn't collide with Segments, or lies directly on the vertex
 		}
-		if ((AlmostEqual(pdot, s1dot) && AlmostEqual(pdot, s2dot)) && (pdotnorm > s1dotnorm && pdotnorm > s2dotnorm)) 
+        if ((almostEqual(pDot, s1Dot) && almostEqual(pDot, s2Dot)) && (pDotNorm > s1DotNorm && pDotNorm > s2DotNorm))
 		{
-			return min(pdotnorm - s1dotnorm, pdotnorm - s2dotnorm);
+            return min(pDotNorm - s1DotNorm, pDotNorm - s2DotNorm);
 		}
-		if ((AlmostEqual(pdot, s1dot) && AlmostEqual(pdot, s2dot)) && (pdotnorm < s1dotnorm && pdotnorm < s2dotnorm)) 
+        if ((almostEqual(pDot, s1Dot) && almostEqual(pDot, s2Dot)) && (pDotNorm < s1DotNorm && pDotNorm < s2DotNorm))
 		{
-			return -min(s1dotnorm - pdotnorm, s2dotnorm - pdotnorm);
+            return -min(s1DotNorm - pDotNorm, s2DotNorm - pDotNorm);
 		}
 	}
 
-	return -(pdotnorm - s1dotnorm + (s1dotnorm - s2dotnorm)*(s1dot - pdot) / (s1dot - s2dot));
+    return -(pDotNorm - s1DotNorm + (s1DotNorm - s2DotNorm)*(s1Dot - pDot) / (s1Dot - s2Dot));
 }
 
-/**
-	* 专门为环绕矩形生成的nfp
-	* @param A
-	* @param B
-	* @return
-	*/
-vector<NestPath>* GeometryUtil::NoFitPolygonRectangle(NestPath A, NestPath B)
+vector<NestPath>* GeometryUtil::noFitPolygonRectangle(NestPath A, NestPath B)
 {
-	double minAx = A.Get(0).m_x;
-	double minAy = A.Get(0).m_y;
-	double maxAx = A.Get(0).m_x;
-	double maxAy = A.Get(0).m_y;
+    double minAX = A.Get(0).x;
+    double minAY = A.Get(0).y;
+    double maxAX = A.Get(0).x;
+    double maxAY = A.Get(0).y;
 
 	for (int i = 1; i < A.Size(); i++) 
 	{
-		if (A.Get(i).m_x < minAx)
+        if (A.Get(i).x < minAX)
 		{
-			minAx = A.Get(i).m_x;
+            minAX = A.Get(i).x;
 		}
-		if (A.Get(i).m_y < minAy)
+        if (A.Get(i).y < minAY)
 		{
-			minAy = A.Get(i).m_y;
+            minAY = A.Get(i).y;
 		}
-		if (A.Get(i).m_x > maxAx)
+        if (A.Get(i).x > maxAX)
 		{
-			maxAx = A.Get(i).m_x;
+            maxAX = A.Get(i).x;
 		}
-		if (A.Get(i).m_y > maxAy)
+        if (A.Get(i).y > maxAY)
 		{
-			maxAy = A.Get(i).m_y;
+            maxAY = A.Get(i).y;
 		}
 	}
 
-	double minBx = B.Get(0).m_x;
-	double minBy = B.Get(0).m_y;
-	double maxBx = B.Get(0).m_x;
-	double maxBy = B.Get(0).m_y;
+    double minBX = B.Get(0).x;
+    double minBY = B.Get(0).y;
+    double maxBX = B.Get(0).x;
+    double maxBY = B.Get(0).y;
 	for (int i = 1; i < B.Size(); i++) 
 	{
-		if (B.Get(i).m_x < minBx)
+        if (B.Get(i).x < minBX)
 		{
-			minBx = B.Get(i).m_x;
+            minBX = B.Get(i).x;
 		}
-		if (B.Get(i).m_y < minBy)
+        if (B.Get(i).y < minBY)
 		{
-			minBy = B.Get(i).m_y;
+            minBY = B.Get(i).y;
 		}
-		if (B.Get(i).m_x > maxBx)
+        if (B.Get(i).x > maxBX)
 		{
-			maxBx = B.Get(i).m_x;
+            maxBX = B.Get(i).x;
 		}
-		if (B.Get(i).m_y > maxBy)
+        if (B.Get(i).y > maxBY)
 		{
-			maxBy = B.Get(i).m_y;
+            maxBY = B.Get(i).y;
 		}
 	}
 
 
 
-	if (maxBx - minBx > maxAx - minAx) 
+    if (maxBX - minBX > maxAX - minAX)
 	{
 
 		return NULL;
 	}
-	double diffBy = maxBy - minBy;
-	double diffAy = maxAy - minAy;
+    double diffBY = maxBY - minBY;
+    double diffAY = maxAY - minAY;
 
-	if (diffBy > diffAy) 
+    if (diffBY > diffAY)
 	{
 		return NULL;
 	}
@@ -1327,24 +1246,18 @@ vector<NestPath>* GeometryUtil::NoFitPolygonRectangle(NestPath A, NestPath B)
 
 	nfpRect = new vector<NestPath>();
 	NestPath res;
-	res.Add(minAx - minBx + B.Get(0).m_x, minAy - minBy + B.Get(0).m_y);
-	res.Add(maxAx - maxBx + B.Get(0).m_x, minAy - minBy + B.Get(0).m_y);
-	res.Add(maxAx - maxBx + B.Get(0).m_x, maxAy - maxBy + B.Get(0).m_y);
-	res.Add(minAx - minBx + B.Get(0).m_x, maxAy - maxBy + B.Get(0).m_y);
+    res.Add(minAX - minBX + B.Get(0).x, minAY - minBY + B.Get(0).y);
+    res.Add(maxAX - maxBX + B.Get(0).x, minAY - minBY + B.Get(0).y);
+    res.Add(maxAX - maxBX + B.Get(0).x, maxAY - maxBY + B.Get(0).y);
+    res.Add(minAX - minBX + B.Get(0).x, maxAY - maxBY + B.Get(0).y);
 	nfpRect->push_back(res);
 	return nfpRect;
 }
 
-/**
-	*
-	* @param A
-	* @param B
-	* @return
-	*/
-vector<NestPath> GeometryUtil::MinkowskiDifference(NestPath A, NestPath B)
+vector<NestPath> GeometryUtil::minkowskiDifference(NestPath A, NestPath B)
 {
-	Path Ac = Placementworker::ScaleUp2ClipperCoordinates(A);
-	Path Bc = Placementworker::ScaleUp2ClipperCoordinates(B);
+    Path Ac = Placementworker::scaleUp2ClipperCoordinates(A);
+    Path Bc = Placementworker::scaleUp2ClipperCoordinates(B);
 	for (int i = 0; i < Bc.size(); i++) 
 	{
 		long X = Bc.at(i).X;
@@ -1359,8 +1272,8 @@ vector<NestPath> GeometryUtil::MinkowskiDifference(NestPath A, NestPath B)
 	for (int i = 0; i < solution.size(); i++) 
 	{
 
-		NestPath  n = Placementworker::ToNestCoordinates(solution.at(i));
-		double sarea = GeometryUtil::PolygonArea(n);
+        NestPath  n = Placementworker::toNestCoordinates(solution.at(i));
+        double sarea = GeometryUtil::polygonArea(n);
 		if (largestArea > sarea) 
 		{
 			clipperNfp = n;
@@ -1370,8 +1283,8 @@ vector<NestPath> GeometryUtil::MinkowskiDifference(NestPath A, NestPath B)
 
 	for (int i = 0; i < clipperNfp.Size(); i++) 
 	{
-		clipperNfp.Get(i).m_x += B.Get(0).m_x;
-		clipperNfp.Get(i).m_y += B.Get(0).m_y;
+        clipperNfp.Get(i).x += B.Get(0).x;
+        clipperNfp.Get(i).y += B.Get(0).y;
 	}
 	//vector<NestPath> *nfp = new vector<NestPath>();
 	vector<NestPath> nfp;
@@ -1379,29 +1292,29 @@ vector<NestPath> GeometryUtil::MinkowskiDifference(NestPath A, NestPath B)
 	return nfp;
 }
 
-NestPath GeometryUtil::Linearize(Segments p1, Segments p2, double rx, double ry, double angle, int laregearc, int sweep, double tol) 
+NestPath GeometryUtil::linearize(Segments p1, Segments p2, double rx, double ry, double angle, int laregearc, int sweep, double tol)
 {
 	NestPath finished;
 	finished.Add(p2);
-	DataExchange arc = ConvertToCenter(p1, p2, rx, ry, angle, laregearc, sweep);
+    DataExchange arc = convertToCenter(p1, p2, rx, ry, angle, laregearc, sweep);
 	deque<DataExchange> list;
 	list.push_back(arc);
 	while (list.size() > 0) 
 	{
 		arc = list.front();
-		DataExchange fullarc = ConvertToSvg(arc.m_center, arc.m_rx, arc.m_ry, arc.m_theta, arc.m_extent, arc.m_angle);
-		DataExchange subarc = ConvertToSvg(arc.m_center, arc.m_rx, arc.m_ry, arc.m_theta, 0.5*arc.m_extent, arc.m_angle);
-		Segments arcmid = subarc.m_p2;
-		Segments mid(0.5*(fullarc.m_p1.m_x + fullarc.m_p2.m_x), 0.5 *(fullarc.m_p1.m_y + fullarc.m_p2.m_y));
-		if (WithinDistance(mid, arcmid, tol)) 
+        DataExchange fullArc = convertToSvg(arc.center, arc.rx, arc.ry, arc.theta, arc.extent, arc.angle);
+        DataExchange subArc = convertToSvg(arc.center, arc.rx, arc.ry, arc.theta, 0.5*arc.extent, arc.angle);
+        Segments arcMid = subArc.p2;
+        Segments mid(0.5*(fullArc.p1.x + fullArc.p2.x), 0.5 *(fullArc.p1.y + fullArc.p2.y));
+        if (withinDistance(mid, arcMid, tol))
 		{
-			finished.Reverse(); finished.Add(Segments(fullarc.m_p2)); finished.Reverse();
+            finished.reverse(); finished.Add(Segments(fullArc.p2)); finished.reverse();
 			list.pop_front();
 		}
 		else 
 		{
-			DataExchange arc1(Segments(arc.m_center), arc.m_rx, arc.m_ry, arc.m_theta, 0.5 * arc.m_extent, arc.m_angle, false);
-			DataExchange arc2(Segments(arc.m_center), arc.m_rx, arc.m_ry, arc.m_theta + 0.5 * arc.m_extent, 0.5 * arc.m_extent, arc.m_angle, false);
+            DataExchange arc1(Segments(arc.center), arc.rx, arc.ry, arc.theta, 0.5 * arc.extent, arc.angle, false);
+            DataExchange arc2(Segments(arc.center), arc.rx, arc.ry, arc.theta + 0.5 * arc.extent, 0.5 * arc.extent, arc.angle, false);
 			list.pop_front();
 			list.push_front(arc2); list.push_front(arc1);
 		}
@@ -1409,47 +1322,47 @@ NestPath GeometryUtil::Linearize(Segments p1, Segments p2, double rx, double ry,
 	return finished;
 }
 
-DataExchange GeometryUtil::ConvertToSvg(Segments center, double rx, double ry, double theta1, double extent, double angleDegrees) 
+DataExchange GeometryUtil::convertToSvg(Segments center, double rx, double ry, double theta1, double extent, double angleDegrees)
 {
 	double theta2 = theta1 + extent;
 
-	theta1 = DegreesToRadians(theta1);
-	theta2 = DegreesToRadians(theta2);
-	double angle = DegreesToRadians(angleDegrees);
+    theta1 = degreesToRadians(theta1);
+    theta2 = degreesToRadians(theta2);
+    double angle = degreesToRadians(angleDegrees);
 
 	double cos1 = cos(angle);
 	double sin1 = sin(angle);
 
-	double t1cos1 = cos(theta1);
-	double t1sin1 = sin(theta1);
+    double t1Cos1 = cos(theta1);
+    double t1Sin1 = sin(theta1);
 
-	double t2cos1 = cos(theta2);
-	double t2sin1 = sin(theta2);
+    double t2Cos1 = cos(theta2);
+    double t2Sin1 = sin(theta2);
 
-	double x0 = center.m_x + cos1 * rx * t1cos1 + (-sin1) * ry * t1sin1;
-	double y0 = center.m_y + sin1 * rx * t1cos1 + cos1 * ry * t1sin1;
+    double x0 = center.x + cos1 * rx * t1Cos1 + (-sin1) * ry * t1Sin1;
+    double y0 = center.y + sin1 * rx * t1Cos1 + cos1 * ry * t1Sin1;
 
-	double x1 = center.m_x + cos1 * rx * t2cos1 + (-sin1) * ry * t2sin1;
-	double y1 = center.m_y + sin1 * rx * t2cos1 + cos1 * ry * t2sin1;
+    double x1 = center.x + cos1 * rx * t2Cos1 + (-sin1) * ry * t2Sin1;
+    double y1 = center.y + sin1 * rx * t2Cos1 + cos1 * ry * t2Sin1;
 
-	int largearc = (extent > 180) ? 1 : 0;
+    int largeArc = (extent > 180) ? 1 : 0;
 	int sweep = (extent > 0) ? 1 : 0;
 	vector<Segments> list;
 	list.push_back(Segments(x0, y0)); list.push_back(Segments(x1, y1));
-	return DataExchange(Segments(x0, y0), Segments(x1, y1), rx, ry, angle, largearc, sweep, true);
+    return DataExchange(Segments(x0, y0), Segments(x1, y1), rx, ry, angle, largeArc, sweep, true);
 }
 
-DataExchange GeometryUtil::ConvertToCenter(Segments p1, Segments p2, double rx, double ry, double angleDgrees, int largearc, int sweep) 
+DataExchange GeometryUtil::convertToCenter(Segments p1, Segments p2, double rx, double ry, double angleDgrees, int largearc, int sweep)
 {
-	Segments mid(0.5 *(p1.m_x + p2.m_x), 0.5 *(p1.m_y + p2.m_y));
-	Segments diff(0.5 *(p2.m_x - p1.m_x), 0.5 * (p2.m_y - p1.m_y));
+    Segments mid(0.5 *(p1.x + p2.x), 0.5 *(p1.y + p2.y));
+    Segments diff(0.5 *(p2.x - p1.x), 0.5 * (p2.y - p1.y));
 
-	double angle = DegreesToRadians(angleDgrees);
+    double angle = degreesToRadians(angleDgrees);
 	double cos1 = cos(angle);
 	double sin1 = sin(angle);
 
-	double x1 = cos1 * diff.m_x + sin1 * diff.m_y;
-	double y1 = -sin1 * diff.m_x + cos1 * diff.m_y;
+    double x1 = cos1 * diff.x + sin1 * diff.y;
+    double y1 = -sin1 * diff.x + cos1 * diff.y;
 
 	rx = abs(rx);
 	ry = abs(ry);
@@ -1477,8 +1390,8 @@ DataExchange GeometryUtil::ConvertToCenter(Segments p1, Segments p2, double rx, 
 	double cx1 = coef * ((rx * y1) / ry);
 	double cy1 = coef * -((ry * x1) / rx);
 
-	double cx = mid.m_x + (cos1 * cx1 - sin1 * cy1);
-	double cy = mid.m_y + (sin1 * cx1 + cos1 * cy1);
+    double cx = mid.x + (cos1 * cx1 - sin1 * cy1);
+    double cy = mid.y + (sin1 * cx1 + cos1 * cy1);
 
 	double ux = (x1 - cx1) / rx;
 	double uy = (y1 - cy1) / ry;
@@ -1489,13 +1402,13 @@ DataExchange GeometryUtil::ConvertToCenter(Segments p1, Segments p2, double rx, 
 	sign = (uy < 0) ? -1 : 1;
 
 	double theta = sign * acos(p / n);
-	theta = RadiansToDegree(theta);
+    theta = radiansToDegree(theta);
 
 	n = sqrt((ux * ux + uy * uy) * (vx * vx + vy * vy));
 	p = ux * vx + uy * vy;
 	sign = ((ux * vy - uy * vx) < 0) ? -1 : 1;
 	double delta = sign * acos(p / n);
-	delta = RadiansToDegree(delta);
+    delta = radiansToDegree(delta);
 
 	if (sweep == 1 && delta > 0)
 	{
@@ -1515,20 +1428,20 @@ DataExchange GeometryUtil::ConvertToCenter(Segments p1, Segments p2, double rx, 
 
 }
 
-double GeometryUtil::DegreesToRadians(double angle) 
+double GeometryUtil::degreesToRadians(double angle)
 {
 	return angle * (PI / 180);
 }
 
-double GeometryUtil::RadiansToDegree(double angle)
+double GeometryUtil::radiansToDegree(double angle)
 {
 	return angle * (180 / PI);
 }
 
-bool GeometryUtil::WithinDistance(Segments p1, Segments p2, double distance)
+bool GeometryUtil::withinDistance(Segments p1, Segments p2, double distance)
 {
-	double dx = p1.m_x - p2.m_x;
-	double dy = p1.m_y - p2.m_y;
+    double dx = p1.x - p2.x;
+    double dy = p1.y - p2.y;
 	return ((dx * dx + dy * dy) < distance * distance);
 }
 

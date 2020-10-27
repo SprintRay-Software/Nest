@@ -7,15 +7,15 @@ class NfpPair
 public:
 	NfpPair();
 	NfpPair(NestPath a, NestPath b, NfpKey key);
-	NestPath GetA();
-	void SetA(NestPath a);
-	NestPath GetB();
-	void SetB(NestPath b);
-	NfpKey GetKey();
-	void SetKey(NfpKey key);
+    NestPath getA();
+    void setA(NestPath a);
+    NestPath getB();
+    void setB(NestPath b);
+    NfpKey getKey();
+    void setKey(NfpKey key);
 
 public:
-	NestPath m_a;
-	NestPath m_b;
-	NfpKey m_key;
+    NestPath a;
+    NestPath b;
+    NfpKey key;
 };

@@ -2,10 +2,10 @@
 #include "Config.h"
 
 
-bool Segments::Equals(Segments obj)
+bool Segments::equals(Segments obj)
 {
 	Segments s = (Segments)obj;
-	if (m_x == s.m_x && m_y == s.m_y)
+    if (x == s.x && y == s.y)
 	{
 		return true;
 	}
@@ -16,95 +16,88 @@ Segments::Segments()
 {
 }
 
-
-//Segments::Segments(Segments srcSeg)
-//{
-//	x = srcSeg.x;
-//	y = srcSeg.y;
-//}
-
 Segments::Segments(int x, int y)
 {
-	m_x = (double)x;
-	m_y = (double)y;
+    this->x = (double)x;
+    this->y = (double)y;
 }
 
 Segments::Segments(double x1, double y1)
 {
-	int Ix = (int)(x1 * Config::m_cliiper_scale);
-	int Iy = (int)(y1 * Config::m_cliiper_scale);
+    int Ix = (int)(x1 * Config::cliiperScale);
+    int Iy = (int)(y1 * Config::cliiperScale);
 
-	m_x = (double)Ix*1.0 / Config::m_cliiper_scale;
-	m_y = (double)Iy *1.0 / Config::m_cliiper_scale;
+    x = (double)Ix*1.0 / Config::cliiperScale;
+    y = (double)Iy *1.0 / Config::cliiperScale;
 }
 
-string Segments::ToString()
+string Segments::toString()
 {
-	return "x = " + to_string(m_x) + ", y = " + to_string(m_y);
+    return "x = " + to_string(x) + ", y = " + to_string(y);
 }
 
 bool Segments::isMarked()
 {
-	return m_marked;
+    return marked;
 }
 
-void Segments::SetMarked(bool marked)
+void Segments::setMarked(bool marked)
 {
-	m_marked = marked;
+    this->marked = marked;
 }
 
-Segments* Segments::GetStart()
+Segments* Segments::getStart()
 {
-	return m_start;
+    return start;
 }
 
-void Segments::SetStart(Segments *start)
+void Segments::setStart(Segments *start)
 {
-	m_start = start;
+    this->start = start;
 }
 
-Segments* Segments::GetEnd()
+Segments* Segments::getEnd()
 {
-	return m_end;
+    return end;
 }
 
-void Segments::SetEnd(Segments *end)
+void Segments::setEnd(Segments *end)
 {
-	m_end = end;
+    this->end = end;
 }
 
-double Segments::GetX()
+double Segments::getX()
 {
-	return m_x;
+    return x;
 }
 
-void Segments::SetX(double x)
+void Segments::setX(double x)
 {
-	int lx = (int)(m_x * Config::m_cliiper_scale);
-	x = lx * 1.0 / Config::m_cliiper_scale;
+    int lx = (int)(x * Config::cliiperScale);
+    x = lx * 1.0 / Config::cliiperScale;
 }
 
-double Segments::GetY()
+double Segments::getY()
 {
-	return m_y;
+    return y;
 }
 
-void Segments::SetY(double y)
+void Segments::setY(double y)
 {
-	int ly = (int)(m_y * Config::m_cliiper_scale);
-	y = ly * 1.0 / Config::m_cliiper_scale;
+    int ly = (int)(y * Config::cliiperScale);
+    y = ly * 1.0 / Config::cliiperScale;
 }
 
 Segments& Segments::operator=(const Segments srcSeg)
 {
-	m_x = srcSeg.m_x;
-	m_y = srcSeg.m_y;
+    x = srcSeg.x;
+    y = srcSeg.y;
 	return *this;
 }
 
 bool Segments::operator!=(const Segments srcSeg)
 {
-	if (m_x != srcSeg.m_x || m_y != srcSeg.m_y)
+    if (x != srcSeg.x || y != srcSeg.y)
 		return true;
 	else
 		return false;
@@ -112,7 +105,7 @@ bool Segments::operator!=(const Segments srcSeg)
 
 bool Segments::operator==(const Segments srcSeg)
 {
-	if (m_x == srcSeg.m_x && m_y == srcSeg.m_y)
+    if (x == srcSeg.x && y == srcSeg.y)
 		return true;
 	else
 		return false;

@@ -11,12 +11,12 @@ public:
 	Vector(double x, double y, int id, int rotation);
 	Vector(double x, double y, int id, int rotation, Paths nfp);
 	Vector();
-	string ToString();
+    string toString();
 
 public:
-	double m_x;
-	double m_y;
-	int m_id;
-	int m_rotation;
-	Paths m_nfp;
+    double x;
+    double y;
+    int id;
+    int rotation;
+    Paths nfp;
 };

@@ -3,9 +3,9 @@
 
 SegmentRelation::SegmentRelation(int type, int a, int b)
 {
-	m_type = type;
-	m_a = a;
-	m_b = b;
+    this->type = type;
+    this->a = a;
+    this->b = b;
 }
 
 SegmentRelation::SegmentRelation()

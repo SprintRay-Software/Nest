@@ -7,6 +7,6 @@ using namespace std;
 class PostionUtil
 {
 public:
-	static list<NestPath> PositionTranslate4Path(double x, double y, list<NestPath> paths);
+    static list<NestPath> positionTranslate4Path(double x, double y, list<NestPath> paths);
 
 };

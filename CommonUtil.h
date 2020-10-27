@@ -9,17 +9,17 @@ using namespace ClipperLib;
 class CommonUtil
 {
 public:
-	static NestPath Path2NestPath(Path path);
-	static Path NestPath2Path(NestPath nestPath);
-	static ClipperCoor ToClipperCoor(double x, double y);
-	static NestCoor ToNestCoor(long x, long y);
-	static void ChangePosition(NestPath binPath, vector<NestPath> polys);
-	static int ToTree(vector<NestPath> &list_para, int idstart);
-	static NestPath ClipperToNestPath(Path polygon);
-	static void OffsetTree(vector<NestPath> t, double offset);
-	static vector<NestPath> PolygonOffset(NestPath polygon, double offset);
-	static vector<NestPath> BuildTree(vector<NestPath> parts, double curve_tolerance);
+    static NestPath path2NestPath(Path path);
+    static Path nestPath2Path(NestPath nestPath);
+    static ClipperCoor toClipperCoor(double x, double y);
+    static NestCoor toNestCoor(long x, long y);
+    static void changePosition(NestPath binPath, vector<NestPath> polys);
+    static int toTree(vector<NestPath> &listNestPath, int idStart);
+    static NestPath clipperToNestPath(Path polygon);
+    static void offsetTree(vector<NestPath> t, double offset);
+    static vector<NestPath> polygonOffset(NestPath polygon, double offset);
+    static vector<NestPath> buildTree(vector<NestPath> parts, double curveTolerance);
 
 private:
-	static void AddPoint(long x, long y, Path path);
+    static void addPoint(long x, long y, Path path);
 };

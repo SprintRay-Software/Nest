@@ -7,26 +7,26 @@ ClipperCoor::ClipperCoor()
 
 ClipperCoor::ClipperCoor(long x, long y) 
 {
-	m_x = x;
-	m_y = y;
+    this->x = x;
+    this->y = y;
 }
 
-long ClipperCoor::GetX() 
+long ClipperCoor::getX()
 {
-	return m_x;
+    return x;
 }
 
-void ClipperCoor::SetX(long x) 
+void ClipperCoor::setX(long x)
 {
-	m_x = x;
+    this->x = x;
 }
 
-long ClipperCoor::GetY() 
+long ClipperCoor::getY()
 {
-	return m_y;
+    return y;
 }
 
-void ClipperCoor::SetY(long y) 
+void ClipperCoor::setY(long y)
 {
-	m_y = y;
+    this->y = y;
 }

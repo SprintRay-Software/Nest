@@ -10,8 +10,8 @@ class Gson
 public:
 	Gson();
 	~Gson();
-	string ToJson(NfpKey key);
+    string toJson(NfpKey key);
 
 public:
-	string m_str;
+    string str;
 };

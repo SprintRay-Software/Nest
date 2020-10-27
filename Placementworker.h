@@ -14,16 +14,16 @@ class Placementworker
 {
 public:
 	Placementworker(NestPath binPolygon, Config config, map<string, vector<NestPath>> nfpCache);
-	Result PlacePaths(vector<NestPath> &paths);
-	static Path ScaleUp2ClipperCoordinates(NestPath polygon);
-	static NestPath ToNestCoordinates(Path polygon);
+    Result placePaths(vector<NestPath> &paths);
+    static Path scaleUp2ClipperCoordinates(NestPath polygon);
+    static NestPath toNestCoordinates(Path polygon);
 
 public:
-	NestPath m_binPolygon;
-	Config m_config;
-	map<string, vector<NestPath>> m_nfpCache;
+    NestPath binPolygon;
+    Config config;
+    map<string, vector<NestPath>> nfpCache;
 
 private:
-	static Gson *m_gson;
+    static Gson *gson;
 
 };

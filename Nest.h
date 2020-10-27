@@ -15,28 +15,26 @@ class Nest
 {
 public:
 	Nest(NestPath binPath_para, vector<NestPath> parts, Config config, int count);
-	vector<vector<Placement>> StartNest();
-	Result LaunchWorkers(vector<NestPath> tree, NestPath binPolygon, Config config);
-	static vector<vector<Placement>> ApplyPlacement(Result best, vector<NestPath> tree);
-	static vector<int>  CheckIfCanBePlaced(NestPath binPolygon, vector<NestPath> tree);
-	void Add(NestPath np);
-	NestPath GetBinPath();
-	vector<NestPath> GetParts();
-	void SetBinPath(NestPath binPath);
-	void SetParts(vector<NestPath> parts);
-	Config GetConfig();
-	void SetConfig(Config config);
-	//void sort(vector<NestPath> np);
-	//void sort(vector<Individual> Ind);
+    vector<vector<Placement>> startNest();
+    Result launchWorkers(vector<NestPath> tree, NestPath binPolygon, Config config);
+    static vector<vector<Placement>> applyPlacement(Result best, vector<NestPath> tree);
+    static vector<int>  checkIfCanBePlaced(NestPath binPolygon, vector<NestPath> tree);
+    void Add(NestPath np);
+    NestPath getBinPath();
+    vector<NestPath> getParts();
+    void setBinPath(NestPath binPath);
+    void setParts(vector<NestPath> parts);
+    Config getConfig();
+    void setConfig(Config config);
 
 private:
-	NestPath m_binPath;
-	vector<NestPath> m_parts;
-	Config m_config;
-	int m_loopCount;
-	GeneticAlgorithm *m_GA = NULL;
-	map<string, vector<NestPath>> *m_nfpCache;
-	static Gson *m_gson;
-	int m_launchcount = 0;
+    NestPath binPath;
+    vector<NestPath> parts;
+    Config config;
+    int loopCount;
+    GeneticAlgorithm *GA = NULL;
+    map<string, vector<NestPath>> *nfpCache;
+    static Gson *gson;
+    int launchCount = 0;
 };
 

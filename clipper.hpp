@@ -173,7 +173,7 @@ private:
 
 bool Orientation(const Path &poly);
 double Area(const Path &poly);
-int PointInPolygon(const IntPoint &pt, const Path &path);
+int pointInPolygon(const IntPoint &pt, const Path &path);
 
 void SimplifyPolygon(const Path &in_poly, Paths &out_polys, PolyFillType fillType = pftEvenOdd);
 void SimplifyPolygons(const Paths &in_polys, Paths &out_polys, PolyFillType fillType = pftEvenOdd);

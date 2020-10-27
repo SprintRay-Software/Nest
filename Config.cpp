@@ -1,24 +1,24 @@
 #include "Config.h"
 
-double Config::m_cliiper_scale = 10000;
-double Config::m_curve_tolerance = 0.02;
+double Config::cliiperScale = 10000;
+double Config::curveTolerance = 0.02;
 
 Config::Config()
 {
-	m_spacing = 0;
-	m_population_size = 10;
-	m_mutation_rate = 10;
-	m_concave = false;
-	m_use_hole = false;
+    spacing = 0;
+    populationSize = 10;
+    mutationRate = 10;
+    concave = false;
+    useHole = false;
 }
 
 bool Config::isConcave()
 {
-	return m_concave;
+    return concave;
 }
 
-bool Config::isUse_hole()
+bool Config::isUseHole()
 {
-	return m_use_hole;
+    return useHole;
 }
 

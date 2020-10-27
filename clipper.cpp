@@ -437,7 +437,7 @@ bool PointIsVertex(const IntPoint &Pt, OutPt *pp)
 
 //See "The Point in Polygon Problem for Arbitrary Polygons" by Hormann & Agathos
 //http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.88.5498&rep=rep1&type=pdf
-int PointInPolygon(const IntPoint &pt, const Path &path)
+int pointInPolygon(const IntPoint &pt, const Path &path)
 {
   //returns 0 if false, +1 if true, -1 if pt ON polygon boundary
   int result = 0;
@@ -481,7 +481,7 @@ int PointInPolygon(const IntPoint &pt, const Path &path)
 }
 //------------------------------------------------------------------------------
 
-int PointInPolygon (const IntPoint &pt, OutPt *op)
+int pointInPolygon (const IntPoint &pt, OutPt *op)
 {
   //returns 0 if false, +1 if true, -1 if pt ON polygon boundary
   int result = 0;
@@ -528,8 +528,8 @@ bool Poly2ContainsPoly1(OutPt *OutPt1, OutPt *OutPt2)
   OutPt* op = OutPt1;
   do
   {
-    //nb: PointInPolygon returns 0 if false, +1 if true, -1 if pt on polygon
-    int res = PointInPolygon(op->Pt, OutPt2);
+    //nb: pointInPolygon returns 0 if false, +1 if true, -1 if pt on polygon
+    int res = pointInPolygon(op->Pt, OutPt2);
     if (res >= 0) return res > 0;
     op = op->Next; 
   }

@@ -3,69 +3,69 @@
 
 Individual::Individual() 
 {
-	m_fitness = -1;
-	m_placement;
-	m_rotation;
+    this->fitness = -1;
+    this->placement;
+    this->rotation;
 }
 
 Individual::Individual(vector<NestPath> placement, vector<int> rotation)
 {
-	m_fitness = -1;
-	m_placement = placement;
-	m_rotation = rotation;
+    this->fitness = -1;
+    this->placement = placement;
+    this->rotation = rotation;
 }
 
 int Individual::Size() 
 {
-	return m_placement.size();
+    return placement.size();
 }
 
-vector<NestPath>& Individual::GetPlacement()
+vector<NestPath>& Individual::getPlacement()
 {
-	return m_placement;
+    return placement;
 }
 
-void Individual::SetPlacement(vector<NestPath> placement)
+void Individual::setPlacement(vector<NestPath> placement)
 {
-	m_placement = placement;
+    this->placement = placement;
 }
 
-vector<int> Individual::GetRotation()
+vector<int> Individual::getRotation()
 {
-	return m_rotation;
+    return rotation;
 }
 
-void Individual::SetRotation(vector<int> rotation)
+void Individual::setRotation(vector<int> rotation)
 {
-	m_rotation = rotation;
+    this->rotation = rotation;
 }
 
-int Individual::CompareTo(Individual o)
+int Individual::compareTo(Individual o)
 {
-	return m_fitness > o.m_fitness;
+    return fitness > o.fitness;
 }
 
-bool Individual::Equals(Individual obj)
+bool Individual::equals(Individual obj)
 {
 	Individual individual = (Individual)obj;
-	if (m_placement.size() != individual.Size())
+    if (placement.size() != individual.Size())
 	{
 		return false;
 	}
-	for (int i = 0; i < m_placement.size(); i++)
+    for (int i = 0; i < placement.size(); i++)
 	{
-		if (!m_placement.at(i).Equals(individual.GetPlacement().at(i)))
+        if (!placement.at(i).equals(individual.getPlacement().at(i)))
 		{
 			return false;
 		}
 	}
-	if (m_rotation.size() != individual.GetRotation().size())
+    if (rotation.size() != individual.getRotation().size())
 	{
 		return false;
 	}
-	for (int i = 0; i < m_rotation.size(); i++)
+    for (int i = 0; i < rotation.size(); i++)
 	{
-		if (m_rotation.at(i) != individual.GetRotation().at(i))
+        if (rotation.at(i) != individual.getRotation().at(i))
 		{
 			return false;
 		}
@@ -73,22 +73,22 @@ bool Individual::Equals(Individual obj)
 	return true;
 }
 
-string Individual::ToString() 
+string Individual::toString()
 {
 	string res = "";
 	int count = 0;
-	for (int i = 0; i < m_placement.size(); i++)
+    for (int i = 0; i < placement.size(); i++)
 	{
 		res += "NestPath " + to_string(count) + "\n";
 		count++;
-		res += m_placement.at(i).ToString() + "\n";
+        res += placement.at(i).toString() + "\n";
 	}
 	res += "rotation \n";
 	//for (int r : rotation) 
 	int r;
-	for (int i = 0; i < m_rotation.size(); i++)
+    for (int i = 0; i < rotation.size(); i++)
 	{
-		r = m_rotation.at(i);
+        r = rotation.at(i);
 		res += r + " ";
 	}
 	res += "\n";
@@ -96,19 +96,19 @@ string Individual::ToString()
 	return res;
 }
 
-double Individual::GetFitness() 
+double Individual::getFitness()
 {
-	return m_fitness;
+    return fitness;
 }
 
-void Individual::SetFitness(double fitness)
+void Individual::setFitness(double fitness)
 {
-	m_fitness = fitness;
+    this->fitness = fitness;
 }
 
 bool Individual::operator==(const Individual& Ind)
 {
-	if (m_fitness == Ind.m_fitness)
+    if (fitness == Ind.fitness)
 	{
 		return true;
 	}
@@ -120,10 +120,10 @@ bool Individual::operator==(const Individual& Ind)
 
 bool Individual::operator < (const Individual& Ind)
 {
-	return CompareTo(Ind) < 0;
+    return compareTo(Ind) < 0;
 }
 
-bool Individual::Compare(Individual ind1,Individual ind2)
+bool Individual::compare(Individual ind1,Individual ind2)
 {
     return 0;
 }

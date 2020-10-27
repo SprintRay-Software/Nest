@@ -11,8 +11,8 @@ public:
 	Result();
 
 public:
-	vector<vector<Vector>> m_placements;
-	double m_fitness;
-	vector<NestPath> m_paths;
-	double m_area;
+    vector<vector<Vector>> placements;
+    double fitness;
+    vector<NestPath> paths;
+    double area;
 };

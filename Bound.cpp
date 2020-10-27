@@ -1,60 +1,60 @@
 #include "Bound.h"
 
 
-Bound::Bound(double xmin, double ymin, double width, double height)
+Bound::Bound(double minX, double minY, double width, double height)
 {
-	m_xmin = xmin;
-	m_ymin = ymin;
-	m_width = width;
-	m_height = height;
+    this->minX = minX;
+    this->minY = minY;
+    this->width = width;
+    this->height = height;
 }
 
 Bound::Bound()
 {
 }
 
-double Bound::GetXmin()
+double Bound::getMinX()
 {
-	return m_xmin;
+    return minX;
 }
 
-void Bound::SetXmin(double xmin)
+void Bound::setMinX(double minX)
 {
-	m_xmin = xmin;
+    this->minX = minX;
 }
 
-double Bound::GetYmin()
+double Bound::getMinY()
 {
-	return m_ymin;
+    return minY;
 }
 
-void Bound::SetYmin(double ymin) 
+void Bound::setMinY(double minY)
 {
-	m_ymin = ymin;
+    this->minY = minY;
 }
 
-double Bound::GetWidth()
+double Bound::getWidth()
 {
-	return m_width;
+    return width;
 }
 
-void Bound::SetWidth(double width)
+void Bound::setWidth(double width)
 {
-	m_width = width;
+    this->width = width;
 }
 
-double Bound::GetHeight()
+double Bound::getHeight()
 {
-	return m_height;
+    return height;
 }
 
-void Bound::SetHeight(double height)
+void Bound::setHeight(double height)
 {
-	m_height = height;
+    this->height = height;
 }
 
-string Bound::ToString()
+string Bound::toString()
 {
-	return "xmin = " + to_string(m_xmin) + " , ymin = " + to_string(m_ymin) + " , width = " + to_string(m_width) + ", height = " + to_string(m_height);
+    return "minX = " + to_string(minX) + " , minY = " + to_string(minY) + " , width = " + to_string(width) + ", height = " + to_string(height);
 }
 

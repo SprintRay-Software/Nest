@@ -3,10 +3,10 @@
 
 Placement::Placement(int bid, Segments translate, double rotate, string name)
 {
-	m_bid = bid;
-	m_translate = translate;
-	m_rotate = rotate;
-	m_name = name;
+    this->bid = bid;
+    this->translate = translate;
+    this->rotate = rotate;
+    this->name = name;
 }
 
 Placement::Placement()

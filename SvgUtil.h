@@ -10,6 +10,6 @@ using namespace std;
 class SvgUtil
 {
 public:
-	static vector<string> SvgGenerator(vector<NestPath> list, vector<vector<Placement>> applied, double binwidth, double binHeight);
-	static NestPath GetNestPathByBid(int bid, vector<NestPath> list);
+    static vector<string> svgGenerator(vector<NestPath> list, vector<vector<Placement>> applied, double binWidth, double binHeight);
+    static NestPath getNestPathByBid(int bid, vector<NestPath> list);
 };

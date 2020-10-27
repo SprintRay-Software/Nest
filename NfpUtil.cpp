@@ -2,26 +2,20 @@
 #include "GeometryUtil.h"
 
 
-/**
-	* 获取一对多边形，并生成nfp
-	* @param pair
-	* @param config
-	* @return
-	*/
 ParallelData* NfpUtil::NfpGenerator(NfpPair pair, Config config)
 {
 	bool searchEdges = config.isConcave();
-	bool useHoles = config.isUse_hole();
+    bool useHoles = config.isUseHole();
 
-	NestPath A = GeometryUtil::RotatePolygon2Polygon(pair.GetA(), pair.GetKey().GetArotation());
-	NestPath B = GeometryUtil::RotatePolygon2Polygon(pair.GetB(), pair.GetKey().GetBrotation());
+    NestPath A = GeometryUtil::rotatePolygon2Polygon(pair.getA(), pair.getKey().getARotation());
+    NestPath B = GeometryUtil::rotatePolygon2Polygon(pair.getB(), pair.getKey().getBRotation());
 
 	vector<NestPath> *nfp = new vector<NestPath>();
-	if (pair.GetKey().isInside()) 
+    if (pair.getKey().isInside())
 	{
-		if (GeometryUtil::isRectangle(A, 0.001))
+        if (GeometryUtil::isRectangle(A, 0.001))
 		{
-			nfp = GeometryUtil::NoFitPolygonRectangle(A, B);
+            nfp = GeometryUtil::noFitPolygonRectangle(A, B);
 			if (nfp == NULL) 
 			{
 
@@ -29,15 +23,15 @@ ParallelData* NfpUtil::NfpGenerator(NfpPair pair, Config config)
 		}
 		else 
 		{
-			*nfp = GeometryUtil::NoFitPolygon(A, B, true, searchEdges);
+            *nfp = GeometryUtil::noFitPolygon(A, B, true, searchEdges);
 		}
 		if (nfp != NULL && nfp->size() > 0)
 		{
 			for (int i = 0; i < nfp->size(); i++)
 			{
-				if (GeometryUtil::PolygonArea(nfp->at(i)) > 0)
+                if (GeometryUtil::polygonArea(nfp->at(i)) > 0)
 				{
-					nfp->at(i).Reverse();
+                    nfp->at(i).reverse();
 				}
 			}
 		}
@@ -53,7 +47,7 @@ ParallelData* NfpUtil::NfpGenerator(NfpPair pair, Config config)
 		{
 
 			// NFP Generator TODO  double scale contorl
-			*nfp = GeometryUtil::NoFitPolygon(A, B, false, searchEdges);
+            *nfp = GeometryUtil::noFitPolygon(A, B, false, searchEdges);
 			if (nfp == NULL) 
 			{
 
@@ -62,7 +56,7 @@ ParallelData* NfpUtil::NfpGenerator(NfpPair pair, Config config)
 		else 
 		{
 
-			*nfp = GeometryUtil::MinkowskiDifference(A, B);
+            *nfp = GeometryUtil::minkowskiDifference(A, B);
 		}
 		// sanity check
 		if (nfp == NULL || nfp->size() == 0) 
@@ -74,7 +68,7 @@ ParallelData* NfpUtil::NfpGenerator(NfpPair pair, Config config)
 		{
 			if (!searchEdges || i == 0) 
 			{
-				if (abs(GeometryUtil::PolygonArea(nfp->at(i))) < abs(GeometryUtil::PolygonArea(A)))
+                if (abs(GeometryUtil::polygonArea(nfp->at(i))) < abs(GeometryUtil::polygonArea(A)))
 				{
 					nfp->erase(nfp->begin() + i);
 
@@ -90,34 +84,34 @@ ParallelData* NfpUtil::NfpGenerator(NfpPair pair, Config config)
 
 		for (int i = 0; i < nfp->size(); i++)
 		{
-			if (GeometryUtil::PolygonArea(nfp->at(i)) > 0)
+            if (GeometryUtil::polygonArea(nfp->at(i)) > 0)
 			{
-				nfp->at(i).Reverse();
+                nfp->at(i).reverse();
 			}
 
 			if (i > 0) 
 			{
-				if (GeometryUtil::PointInPolygon(nfp->at(i).Get(0), nfp->at(0)))
+                if (GeometryUtil::pointInPolygon(nfp->at(i).Get(0), nfp->at(0)))
 				{
-					if (GeometryUtil::PolygonArea(nfp->at(i)) < 0)
+                    if (GeometryUtil::polygonArea(nfp->at(i)) < 0)
 					{
-						nfp->at(i).Reverse();
+                        nfp->at(i).reverse();
 					}
 				}
 			}
 		}
 
-		if (useHoles && A.GetChildren()->size() > 0)
+        if (useHoles && A.getChildren()->size() > 0)
 		{
-			Bound Bbounds = GeometryUtil::GetPolygonBounds(B);
-			for (int i = 0; i < A.GetChildren()->size(); i++)
+            Bound bBounds = GeometryUtil::getPolygonBounds(B);
+            for (int i = 0; i < A.getChildren()->size(); i++)
 			{
-				Bound Abounds = GeometryUtil::GetPolygonBounds(A.GetChildren()->at(i));
+                Bound aBounds = GeometryUtil::getPolygonBounds(A.getChildren()->at(i));
 
-				if (Abounds.m_width > Bbounds.m_width && Abounds.m_height > Bbounds.m_height)
+                if (aBounds.width > bBounds.width && aBounds.height > bBounds.height)
 				{
 
-					vector<NestPath> cnfp = GeometryUtil::NoFitPolygon(A.GetChildren()->at(i), B, true, searchEdges);
+                    vector<NestPath> cnfp = GeometryUtil::noFitPolygon(A.getChildren()->at(i), B, true, searchEdges);
 					// ensure all interior NFPs have the same winding direction
 
 					if (cnfp.size() > 0) 
@@ -125,9 +119,9 @@ ParallelData* NfpUtil::NfpGenerator(NfpPair pair, Config config)
 
 						for (int j = 0; j < cnfp.size(); j++) 
 						{
-							if (GeometryUtil::PolygonArea(cnfp.at(j)) < 0) 
+                            if (GeometryUtil::polygonArea(cnfp.at(j)) < 0)
 							{
-								cnfp.at(j).Reverse();
+                                cnfp.at(j).reverse();
 							}
 							nfp->push_back(cnfp.at(j));
 						}
@@ -141,5 +135,5 @@ ParallelData* NfpUtil::NfpGenerator(NfpPair pair, Config config)
 	{
 
 	}
-	return new ParallelData(pair.GetKey(), nfp);
+    return new ParallelData(pair.getKey(), nfp);
 }

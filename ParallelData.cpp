@@ -3,32 +3,32 @@
 
 ParallelData::ParallelData()
 {
-	m_value = new vector<NestPath>();
+    value = new vector<NestPath>();
 }
 
 ParallelData::ParallelData(NfpKey key, vector<NestPath> *value)
 {
-	m_key = key;
-	m_value = value;
+    this->key = key;
+    this->value = value;
 }
 
-NfpKey ParallelData::GetKey()
+NfpKey ParallelData::getKey()
 {
-	return m_key;
+    return key;
 }
 
-void ParallelData::SetKey(NfpKey key)
+void ParallelData::setKey(NfpKey key)
 {
-	m_key = key;
+    this->key = key;
 }
 
-vector<NestPath> ParallelData::GetValue()
+vector<NestPath> ParallelData::getValue()
 {
-	return *m_value;
+    return *value;
 }
 
-void ParallelData::SetValue(vector<NestPath> *value)
+void ParallelData::setValue(vector<NestPath> *value)
 {
-	m_value = value;
+    this->value = value;
 }
 
