@@ -11,7 +11,7 @@ class Autoplace
 {
 public:
     static bool read(string fileName, vector<NestPath> &polygons, double scale);
-    static vector<vector<Placement>> translateCoor(double scale, double population);
+    static vector<vector<Placement>> translateCoor(double scale, double population, double length, double width, double offset, double para);
     static void translate(vector<NestPath> &binPath, vector<vector<Placement>> place);
     static QFileInfoList findFiles(const QString &strFilePath, const QString &strNameFilters, QFileInfoList &suffixInfoList);
 };

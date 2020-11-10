@@ -8,6 +8,7 @@
 #include "QDir"
 #include "QDirIterator"
 #include "qDebug"
+#include <QTextCodec>
 
 using namespace std;
 
@@ -16,8 +17,11 @@ using namespace std;
 bool Autoplace::read(string fileName, vector<NestPath> &polygons, double scale)
 {
 	ifstream file;
-    file.open(fileName, ios::in);
-	if (!file.is_open()) return 0;
+    file.open(string(QString::fromStdString(fileName).toLocal8Bit()), ios::in);
+    if (!file.is_open())
+    {
+       return 0;
+    }
 	string str;
 	while (getline(file, str))
 	{
@@ -65,23 +69,46 @@ bool Autoplace::read(string fileName, vector<NestPath> &polygons, double scale)
             tempPolygon.segments->at(i).x = (tempPolygon.segments->at(i).x - tempPolygon.coor_x) * scale + tempPolygon.coor_x;
             tempPolygon.segments->at(i).y = (tempPolygon.segments->at(i).y - tempPolygon.coor_y) * scale + tempPolygon.coor_y;
 		}
+        ClipperLib::ClipperOffset  clipperoff;
+        ClipperLib::Paths dst_paths;
+        ClipperLib::Path dst_path;
+        for (int i = 0; i < tempPolygon.segments->size(); i++)
+        {
+            dst_path.push_back(ClipperLib::IntPoint(static_cast<ClipperLib::cInt>(tempPolygon.segments->at(i).x * 1000), static_cast<ClipperLib::cInt>(tempPolygon.segments->at(i).y * 1000)));
+        }
+        dst_paths.push_back(dst_path);
+        clipperoff.AddPaths(dst_paths,ClipperLib::jtSquare,ClipperLib::etClosedPolygon);
+        clipperoff.Execute(dst_paths,15 * 1000);
+        tempPolygon.segments->clear();
+        for (const auto& dst_path : dst_paths)
+        {
+            for (const auto& point : dst_path)
+            {
+                tempPolygon.segments->push_back(Segments((double)(point.X / 1000.0), (double)(point.Y / 1000.0)));
+            }
+        }
         polygons.push_back(tempPolygon);
 	}
 };
 
-vector<vector<Placement>> Autoplace::translateCoor(double scale, double population)
+vector<vector<Placement>> Autoplace::translateCoor(double scale, double population, double length, double width, double offset, double para)
 {
 	vector<NestPath> polygons;
     QString path = QCoreApplication::applicationDirPath() + "/Borderfinder/";
     QFileInfoList fileList;
     findFiles(path, ".txt",fileList);
+    QTextCodec *code = QTextCodec::codecForName("GBK");
+    string str;
+    QString strDir;
     for (int i = 0; i < fileList.size(); i++)
 	{
-        read((path.toStdString() + fileList.at(i).fileName().toStdString()), polygons, scale);
+        str = code->fromUnicode(path+fileList.at(i).fileName()).data();
+        strDir = QString(QString::fromLocal8Bit(str.c_str()));
+        read(strDir.toStdString(), polygons, scale);
 	}
 	NestPath bin;
-	double binWidth = 1920;
-	double binHeight = 1080;
+    double binWidth = length-2*offset/para;
+    double binHeight = width-2*offset/para;
 	bin.Add(0, 0);
 	bin.Add(binWidth, 0);
 	bin.Add(binWidth, binHeight);
