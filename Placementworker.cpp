@@ -2,6 +2,8 @@
 #include "GeometryUtil.h"
 #include "ClipperCoor.h"
 #include "CommonUtil.h"
+#include "qDebug"
+#include "map"
 
 
 
@@ -42,14 +44,21 @@ Result Placementworker::placePaths(vector<NestPath> &paths)
         double minWidth = DBL_MAX;
 		for (int i = 0; i < paths.size(); i++) 
 		{
-
+            //qDebug() << "placePaths: "<< paths.at(i).getId() << ","<< paths.at(i).getRotation()<< endl;
 			NestPath path = paths.at(i);
 
 			//inner NFP
             key = gson->toJson(NfpKey(-1, path.getId(), true, 0, path.getRotation()));
+            //qDebug() << "key = gson->toJson: "<< QString::fromStdString(key) << endl;
+
+//            map<string, vector<NestPath>>::iterator it; //遍历map
+//            for ( it = nfpCache.begin(); it != nfpCache.end(); ++it ) {
+//                    qDebug()<<"first:"<<QString::fromStdString((*it).first);
+//                }
 
             if (nfpCache.find(key) == nfpCache.end())
 			{
+                //qDebug() << "nfpCache.find(key) == nfpCache.end()"<< endl;
 				continue;
 			}
 
@@ -78,6 +87,7 @@ Result Placementworker::placePaths(vector<NestPath> &paths)
 			Vector *position = NULL;
 			if (placed->size() == 0)
 			{
+                //qDebug() << "placed->size() == 0"<< endl;
 				// first placement , put it on the lefth
                 for (int j = 0; j < binNfp.size(); j++)
 				{
@@ -242,8 +252,10 @@ Result Placementworker::placePaths(vector<NestPath> &paths)
 		{
 			for (auto iter = paths.begin(); iter != paths.end();)
 			{
+                //qDebug() << "(*iter).name: "<< QString::fromStdString((iter->name))<<"placed->at(i).name: "<<QString::fromStdString(placed->at(i).name) << endl;
                 if ((*iter).name == placed->at(i).name)
 				{
+                    //qDebug() << "paths.erase"<< endl;
 					iter = paths.erase(iter);
 					break;
 				}
@@ -260,7 +272,8 @@ Result Placementworker::placePaths(vector<NestPath> &paths)
 		}
 		else 
 		{
-			//break; // something went wrong
+            qDebug() << "something went wrong"<< endl;
+            break; // something went wrong
 		}
 
 	}

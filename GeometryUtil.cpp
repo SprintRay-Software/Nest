@@ -1,3 +1,4 @@
+#include "qDebug"
 #include "GeometryUtil.h"
 #define PI 3.1415926
 
@@ -1229,15 +1230,17 @@ vector<NestPath>* GeometryUtil::noFitPolygonRectangle(NestPath A, NestPath B)
 	}
 
 
-
+    qDebug()<<"maxBX - minBX = "<< maxBX<<","<<minBX<<","<<maxBX - minBX;
+    qDebug()<<"maxAX - minAX = "<< maxAX<<","<<minAX<<","<<maxAX - minAX;
     if (maxBX - minBX > maxAX - minAX)
 	{
-
 		return NULL;
 	}
     double diffBY = maxBY - minBY;
     double diffAY = maxAY - minAY;
 
+    qDebug()<<"diffBY = "<< maxBY<<","<<minBY<<","<<maxBY - minBY;
+    qDebug()<<"diffAY = "<< maxAY<<","<<minAY<<","<<maxAY - minAY;
     if (diffBY > diffAY)
 	{
 		return NULL;

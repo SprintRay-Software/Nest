@@ -125,18 +125,21 @@ vector<vector<Placement>> Autoplace::translateCoor(double scale, double populati
 	Nest nest(bin, polygons, cfg, population);
     place = nest.startNest();
 
-	for (int i = 0; i < polygons.size(); i++)
-	{
-		for (int j = 0; j < place[0].size(); j++)
-		{
-            if (polygons.at(i).name == place[0].at(j).name)
-			{
-                place[0].at(j).coorX = polygons.at(i).coor_x;
-                place[0].at(j).coorY = polygons.at(i).coor_y;
-                place[0].at(j).isTranslate = false;;
-			}
-		}
-	}
+    if(place.size() != 0)
+    {
+        for (int i = 0; i < polygons.size(); i++)
+        {
+            for (int j = 0; j < place[0].size(); j++)
+            {
+                if (polygons.at(i).name == place[0].at(j).name)
+                {
+                    place[0].at(j).coorX = polygons.at(i).coor_x;
+                    place[0].at(j).coorY = polygons.at(i).coor_y;
+                    place[0].at(j).isTranslate = false;;
+                }
+            }
+        }
+    }
 	return place;
 }
 

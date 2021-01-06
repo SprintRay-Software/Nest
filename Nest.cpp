@@ -3,6 +3,7 @@
 #include "Nest.h"
 #include "CommonUtil.h"
 #include "GeometryUtil.h"
+#include "qDebug"
 
 
 struct LocMinSorter
@@ -120,43 +121,55 @@ vector<vector<Placement>> Nest::startNest()
 
     launchCount = 0;
 	Result best;
+    qDebug() << "loopCount:" << loopCount <<endl;
     for (int i = 0; i < loopCount; i++)
 	{
-
+        qDebug() << "i:" << i <<endl;
         Result result = launchWorkers(tree, binPolygon, config);
 
-        std::cout << "fitness: " << result.fitness << endl;
-
+        qDebug() << "return bestResult1" << endl;
 		if (i == 0) 
 		{
+            qDebug() << "return bestResult2" << endl;
 			best = result;
+            qDebug() << "return bestResult11" << endl;
 		}
 		else 
 		{
+            qDebug() << "return bestResult3" << endl;
             if (best.fitness > result.fitness)
 			{
+                qDebug() << "return bestResult4" << endl;
 				best = result;
+                qDebug() << "return bestResult33" << endl;
 			}
+            qDebug() << "return bestResult333" << endl;
 		}
 	}
+    qDebug() << "return bestResult5" << endl;
     double sumArea = 0;
     double totalArea = 0;
     for (int i = 0; i < best.placements.size(); i++)
 	{
+        qDebug() << "return bestResult6" << endl;
         totalArea += abs(GeometryUtil::polygonArea(binPolygon));
         for (int j = 0; j < best.placements.at(i).size(); j++)
 		{
+            qDebug() << "return bestResult7" << endl;
             sumArea += abs(GeometryUtil::polygonArea(tree.at(best.placements.at(i).at(j).id)));
 		}
 	}
     double rate = (sumArea / totalArea) * 100;
+    qDebug() << "applyPlacement" << endl;
     vector<vector<Placement>> appliedPlacement = applyPlacement(best, tree);
+    qDebug() << "startNest" << endl;
 	return appliedPlacement;
 }
 
 
 Result Nest::launchWorkers(vector<NestPath> tree, NestPath binPolygon, Config config)
 {
+    qDebug() << "launchWorkers" << endl;
     launchCount++;
     if (GA == NULL)
 	{
@@ -172,7 +185,7 @@ Result Nest::launchWorkers(vector<NestPath> tree, NestPath binPolygon, Config co
         std::sort(adam.begin(), adam.end(), LocMinSorter());
         GA = new GeneticAlgorithm(adam, binPolygon, config);
 	}
-
+    qDebug() << "individual" << endl;
 	Individual *individual = NULL;
     for (int i = 0; i < GA->population->size(); i++)
 	{
@@ -200,35 +213,89 @@ Result Nest::launchWorkers(vector<NestPath> tree, NestPath binPolygon, Config co
 	vector<NfpPair> nfpPairs;
 	NfpKey key;
 
+    qDebug() << "nfpPairs" << endl;
     for (int i = 0; i < placeList.size(); i++)
 	{
+        //qDebug() << "placeList[i].id" << placeList[i].getId()<< endl;
+        //qDebug() << "placeList[i].rotation" << placeList[i].getRotation()<< endl;
         NestPath part = placeList.at(i);
         key = NfpKey(binPolygon.getId(), part.getId(), true, 0, part.getRotation());
+        NfpPair nfpPair1(binPolygon, part, key);
+        //qDebug() << "NfpKey keyed0:" << nfpPair1.getA().getId()<<","<<nfpPair1.getB().getId()<<","<<nfpPair1.getA().getRotation()<<","<<nfpPair1.getB().getRotation()<< endl;
 		nfpPairs.push_back(NfpPair(binPolygon, part, key));
 		for (int j = 0; j < i; j++) 
 		{
-            NestPath placed = placeList.at(j);
+            NestPath placed = placeList.at(j);            
+            //qDebug() << "NfpKey keyed1:" << placed.getId()<<","<<part.getId()<<","<<rotations.at(j)<<","<<rotations.at(i)<< endl;
+            //qDebug() << "NfpKey keyed2:" << placed.getId()<<","<<part.getId()<<","<<placed.getRotation()<<","<<part.getRotation()<< endl;
             NfpKey keyed(placed.getId(), part.getId(), false, rotations.at(j), rotations.at(i));
-			nfpPairs.push_back(NfpPair(placed, part, keyed));
+            NfpPair nfpPair(placed, part, keyed);
+            //qDebug() << "NfpKey keyed3:" << nfpPair.getA().getId()<<","<<nfpPair.getB().getId()<<","<<nfpPair.getA().getRotation()<<","<<nfpPair.getB().getRotation()<< endl;
+            nfpPairs.push_back(NfpPair(placed, part, keyed));
 		}
 	}
 
+//    for (int i = 0; i < nfpPairs.size(); i++)
+//    {
+//       qDebug() << "NfpKey keyed4:" << nfpPairs.at(i).getA().getId()<<","<<nfpPairs.at(i).getB().getId()<<","<<nfpPairs.at(i).getA().getRotation()<<","<<nfpPairs.at(i).getB().getRotation()<< endl;
+//    }
 
+    qDebug() << "generatedNfp" << endl;
 	vector<ParallelData> generatedNfp;
 	for (int i = 0; i < nfpPairs.size(); i++)
 	{
 		NfpPair nfpPair = nfpPairs.at(i);
+//        qDebug() << "NfpGenerator" << endl;
+//        qDebug() << "NfpPairA:" << nfpPair.getA().getId()<<","<<nfpPair.getA().getRotation();
+//        qDebug() << "NfpPairB:" << nfpPair.getB().getId()<<","<<nfpPair.getB().getRotation();
+//        qDebug() << "NfpPairKEY:" << nfpPair.getKey().getA()<<","<<nfpPair.getKey().getB();
+//        qDebug() << "NfpPairKEY:" << nfpPair.getKey().getARotation()<<","<<nfpPair.getKey().getBRotation();
+//        qDebug() << "NfpPairKEY:" << nfpPair.getKey().inside;
+//        qDebug() << "NfpGenerator before" << endl;
 		ParallelData *data = NfpUtil::NfpGenerator(nfpPair, config);
+        if(data->value == NULL)
+        {
+            NestPath b = nfpPair.getB();
+            b.setRotation(b.getRotation() + 90);
+            nfpPair.setB(b);
+            NfpKey keyed1(nfpPair.getA().getId(), nfpPair.getB().getId(), nfpPair.getKey().isInside(), nfpPair.getA().getRotation(), nfpPair.getB().getRotation());
+            nfpPair = NfpPair(nfpPair.getA(), nfpPair.getB(), keyed1);
+            data = NfpUtil::NfpGenerator(nfpPair, config);
+            //qDebug() << "data.key:" << data->getKey().getBRotation();
+        }
+        qDebug() << "NfpGenerator after" << endl;
 		generatedNfp.push_back(*data);
 	}
+    qDebug() << "generatedNfp.size" <<generatedNfp.size()<< endl;
 	for (int i = 0; i < generatedNfp.size(); i++)
 	{
+        //qDebug() << "toJson before" << endl;
 		ParallelData Nfp = generatedNfp.at(i);
+        //qDebug() << "*Nfp.value.size:" <<(*(Nfp.value)).size()<<endl;
+        //for(int i =0 ;i<(*(Nfp.value)).size();i++)
+//        {
+//            qDebug() << "*Nfp.value.id1:" << (*(Nfp.value))[0].getId() <<endl;
+//            qDebug() << "*Nfp.value.rotation1:" << (*(Nfp.value))[0].getRotation() <<endl;
+//            qDebug() << "*Nfp.value.id2:" << (*(Nfp.value))[1].getId() <<endl;
+//            qDebug() << "*Nfp.value.rotation2:" << (*(Nfp.value))[1].getRotation() <<endl;
+//            qDebug() << "*Nfp.value.id3:" << (*(Nfp.value))[2].getId() <<endl;
+//            qDebug() << "*Nfp.value.rotation3:" << (*(Nfp.value))[2].getRotation() <<endl;
+//        }
         string tkey = gson->toJson(Nfp.getKey());
-        nfpCache->insert(make_pair(tkey, *Nfp.value));
+        qDebug() << "tkey:" << QString::fromStdString(tkey) <<endl;
+        if(Nfp.value == NULL)
+        {
+            qDebug() << "point is null" << endl;
+        }
+        try {
+                nfpCache->insert(make_pair(tkey, *Nfp.value));
+        } catch (...) {
+            qDebug() << "insert err" << endl;
+        }
+        //qDebug() << "toJson after" << endl;
 	}
 
-
+    qDebug() << "Placementworker" << endl;
     Placementworker worker(binPolygon, config, *nfpCache);
 	vector<NestPath> placeListSlice;
 
@@ -239,10 +306,11 @@ Result Nest::launchWorkers(vector<NestPath> tree, NestPath binPolygon, Config co
 	vector<vector<NestPath>> data;
 	data.push_back(placeListSlice);
 	vector<Result> placements;
+    qDebug() << "data.size: " << data.size() << endl;
 	for (int i = 0; i < data.size(); i++) 
 	{
         Result result = worker.placePaths((data.at(i)));
-        std::cout << "result.m_fitness: " << result.fitness << endl;
+        qDebug() << "result.m_fitness: " << result.fitness << endl;
 		placements.push_back(result);
 	}
 	if (placements.size() == 0) 
@@ -250,6 +318,7 @@ Result Nest::launchWorkers(vector<NestPath> tree, NestPath binPolygon, Config co
 		Result bestResult1;
 		return bestResult1;
 	}
+    qDebug() << "individual->fitness" << endl;
     individual->fitness = placements.at(0).fitness;
 	Result bestResult = placements.at(0);
 	for (int i = 1; i < placements.size(); i++) 
@@ -259,6 +328,7 @@ Result Nest::launchWorkers(vector<NestPath> tree, NestPath binPolygon, Config co
 			bestResult = placements.at(i);
 		}
 	}
+    qDebug() << "return bestResult" << endl;
 	return bestResult;
 }
 

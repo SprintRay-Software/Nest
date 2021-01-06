@@ -1,24 +1,31 @@
 #include "NfpUtil.h"
 #include "GeometryUtil.h"
-
+#include "qDebug"
 
 ParallelData* NfpUtil::NfpGenerator(NfpPair pair, Config config)
 {
+//    qDebug() << "NfpGenerator" << endl;
+//    qDebug() << "NfpPairA:" << pair.getA().getId()<<","<<pair.getA().getRotation();
+//    qDebug() << "NfpPairB:" << pair.getB().getId()<<","<<pair.getB().getRotation();
+//    qDebug() << "NfpPairKEY:" << pair.getKey().getA()<<","<<pair.getKey().getB();
+//    qDebug() << "NfpPairKEY:" << pair.getKey().getARotation()<<","<<pair.getKey().getBRotation();
 	bool searchEdges = config.isConcave();
     bool useHoles = config.isUseHole();
 
     NestPath A = GeometryUtil::rotatePolygon2Polygon(pair.getA(), pair.getKey().getARotation());
     NestPath B = GeometryUtil::rotatePolygon2Polygon(pair.getB(), pair.getKey().getBRotation());
 
+    qDebug() << "nfp" << endl;
 	vector<NestPath> *nfp = new vector<NestPath>();
     if (pair.getKey().isInside())
 	{
+        qDebug() << "pair.getKey().isInside" << endl;
         if (GeometryUtil::isRectangle(A, 0.001))
 		{
             nfp = GeometryUtil::noFitPolygonRectangle(A, B);
 			if (nfp == NULL) 
 			{
-
+                qDebug() << "nfp == NULL" << endl;
 			}
 		}
 		else 
@@ -37,11 +44,13 @@ ParallelData* NfpUtil::NfpGenerator(NfpPair pair, Config config)
 		}
 		else 
 		{
+            qDebug() << "nfp == NULL || nfp->size() > 0" << endl;
 			//Warning on null inner NFP
 		}
 	}
 	else 
 	{
+        qDebug() << "pair.getKey().isInside22" << endl;
 		int count = 0;
 		if (searchEdges) 
 		{
@@ -50,7 +59,7 @@ ParallelData* NfpUtil::NfpGenerator(NfpPair pair, Config config)
             *nfp = GeometryUtil::noFitPolygon(A, B, false, searchEdges);
 			if (nfp == NULL) 
 			{
-
+                qDebug() << "nfp == NULL2" << endl;
 			}
 		}
 		else 
@@ -61,7 +70,7 @@ ParallelData* NfpUtil::NfpGenerator(NfpPair pair, Config config)
 		// sanity check
 		if (nfp == NULL || nfp->size() == 0) 
 		{
-
+            qDebug() << "nfp == NULL3" << endl;
 			return NULL;
 		}
 		for (int i = 0; i < nfp->size(); i++)
@@ -71,14 +80,14 @@ ParallelData* NfpUtil::NfpGenerator(NfpPair pair, Config config)
                 if (abs(GeometryUtil::polygonArea(nfp->at(i))) < abs(GeometryUtil::polygonArea(A)))
 				{
 					nfp->erase(nfp->begin() + i);
-
+                    qDebug() << "nfp == NULL4" << endl;
 					return NULL;
 				}
 			}
 		}
 		if (nfp->size() == 0)
 		{
-
+            qDebug() << "nfp == NULL5" << endl;
 			return NULL;
 		}
 
@@ -133,7 +142,8 @@ ParallelData* NfpUtil::NfpGenerator(NfpPair pair, Config config)
 	}
 	if (nfp == NULL) 
 	{
-
+        qDebug() << "nfp is null" << endl;
 	}
+    qDebug() << "return new ParallelData" << endl;
     return new ParallelData(pair.getKey(), nfp);
 }
