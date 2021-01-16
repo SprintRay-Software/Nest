@@ -14,7 +14,7 @@ using namespace std;
 
 #define pi 3.14159265
 
-bool Autoplace::read(string fileName, vector<NestPath> &polygons, double scale)
+bool Autoplace::read(string fileName, vector<NestPath> &polygons, double margin, int rotateNum)
 {
 	ifstream file;
     file.open(string(QString::fromStdString(fileName).toLocal8Bit()), ios::in);
@@ -40,7 +40,7 @@ bool Autoplace::read(string fileName, vector<NestPath> &polygons, double scale)
         string tempFileName = fileName.substr(iPos, fileName.length() - iPos);
         string name = tempFileName.substr(0, tempFileName.rfind("."));
         tempPolygon.name = name;
-        tempPolygon.setRotation(4);
+        tempPolygon.setRotation(rotateNum);
 
         double minX = tempPolygon.segments->at(0).x, maxX = tempPolygon.segments->at(0).x, minY = tempPolygon.segments->at(0).y, maxY = tempPolygon.segments->at(0).y;
         for (int i = 0; i < tempPolygon.segments->size(); i++)
@@ -64,11 +64,11 @@ bool Autoplace::read(string fileName, vector<NestPath> &polygons, double scale)
 		}
         tempPolygon.coor_x = (maxX + minX) / 2;
         tempPolygon.coor_y = (maxY + minY) / 2;
-        for (int i = 0; i < tempPolygon.segments->size(); i++)
-		{
-            tempPolygon.segments->at(i).x = (tempPolygon.segments->at(i).x - tempPolygon.coor_x) * scale + tempPolygon.coor_x;
-            tempPolygon.segments->at(i).y = (tempPolygon.segments->at(i).y - tempPolygon.coor_y) * scale + tempPolygon.coor_y;
-		}
+//        for (int i = 0; i < tempPolygon.segments->size(); i++)
+//		{
+//            tempPolygon.segments->at(i).x = (tempPolygon.segments->at(i).x - tempPolygon.coor_x) * scale + tempPolygon.coor_x;
+//            tempPolygon.segments->at(i).y = (tempPolygon.segments->at(i).y - tempPolygon.coor_y) * scale + tempPolygon.coor_y;
+//		}
         ClipperLib::ClipperOffset  clipperoff;
         ClipperLib::Paths dst_paths;
         ClipperLib::Path dst_path;
@@ -78,7 +78,7 @@ bool Autoplace::read(string fileName, vector<NestPath> &polygons, double scale)
         }
         dst_paths.push_back(dst_path);
         clipperoff.AddPaths(dst_paths,ClipperLib::jtSquare,ClipperLib::etClosedPolygon);
-        clipperoff.Execute(dst_paths,15 * 1000);
+        clipperoff.Execute(dst_paths,margin * 1000);
         tempPolygon.segments->clear();
         for (const auto& dst_path : dst_paths)
         {
@@ -91,7 +91,7 @@ bool Autoplace::read(string fileName, vector<NestPath> &polygons, double scale)
 	}
 };
 
-vector<vector<Placement>> Autoplace::translateCoor(double scale, double population, double length, double width, double offset, double para)
+vector<vector<Placement>> Autoplace::translateCoor(double margin, double population, double length, double width, double offset, double para, int rotateNum)
 {
 	vector<NestPath> polygons;
     QString path = QCoreApplication::applicationDirPath() + "/Borderfinder/";
@@ -104,7 +104,7 @@ vector<vector<Placement>> Autoplace::translateCoor(double scale, double populati
 	{
         str = code->fromUnicode(path+fileList.at(i).fileName()).data();
         strDir = QString(QString::fromLocal8Bit(str.c_str()));
-        read(strDir.toStdString(), polygons, scale);
+        read(strDir.toStdString(), polygons, margin, rotateNum);
 	}
 	NestPath bin;
     double binWidth = length-2*offset/para;
