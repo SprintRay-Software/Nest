@@ -41,6 +41,7 @@ bool Autoplace::read(string fileName, vector<NestPath> &polygons, double margin,
         string name = tempFileName.substr(0, tempFileName.rfind("."));
         tempPolygon.name = name;
         tempPolygon.setRotation(rotateNum);
+        tempPolygon.setRotationNum(rotateNum);
 
         double minX = tempPolygon.segments->at(0).x, maxX = tempPolygon.segments->at(0).x, minY = tempPolygon.segments->at(0).y, maxY = tempPolygon.segments->at(0).y;
         for (int i = 0; i < tempPolygon.segments->size(); i++)
@@ -64,11 +65,7 @@ bool Autoplace::read(string fileName, vector<NestPath> &polygons, double margin,
 		}
         tempPolygon.coor_x = (maxX + minX) / 2;
         tempPolygon.coor_y = (maxY + minY) / 2;
-//        for (int i = 0; i < tempPolygon.segments->size(); i++)
-//		{
-//            tempPolygon.segments->at(i).x = (tempPolygon.segments->at(i).x - tempPolygon.coor_x) * scale + tempPolygon.coor_x;
-//            tempPolygon.segments->at(i).y = (tempPolygon.segments->at(i).y - tempPolygon.coor_y) * scale + tempPolygon.coor_y;
-//		}
+
         ClipperLib::ClipperOffset  clipperoff;
         ClipperLib::Paths dst_paths;
         ClipperLib::Path dst_path;
@@ -87,12 +84,17 @@ bool Autoplace::read(string fileName, vector<NestPath> &polygons, double margin,
                 tempPolygon.segments->push_back(Segments((double)(point.X / 1000.0), (double)(point.Y / 1000.0)));
             }
         }
+        //add wangjx
+        std::cout<<"wangjx tempPolygon.size"<<tempPolygon.Size()<<std::endl;
         polygons.push_back(tempPolygon);
 	}
 };
 
 vector<vector<Placement>> Autoplace::translateCoor(double margin, double population, double length, double width, double offset, double para, int rotateNum)
 {
+    //add wangjx
+    clock_t start_time=clock();
+    std::cout<<"\nAutoplace::"<<std::endl;
 	vector<NestPath> polygons;
     QString path = QCoreApplication::applicationDirPath() + "/Borderfinder/";
     QFileInfoList fileList;
@@ -101,12 +103,20 @@ vector<vector<Placement>> Autoplace::translateCoor(double margin, double populat
     string str;
     QString strDir;
     for (int i = 0; i < fileList.size(); i++)
-	{
+    {
         str = code->fromUnicode(path+fileList.at(i).fileName()).data();
+        //add wangjx
+        std::cout<<"\nLoop read file\t"<<i<<"of"<<fileList.size()<<str<<std::endl;
+        if(str.find("ConvexHull")!=std::string::npos)
+            continue;
         strDir = QString(QString::fromLocal8Bit(str.c_str()));
+        //add wangjx
+        std::cout<<"\nread it\t"<<str<<std::endl;
         read(strDir.toStdString(), polygons, margin, rotateNum);
 	}
-	NestPath bin;
+    //add wangjx
+    std::cout<<"read file time :\t"<<(double)(clock()-start_time)/CLOCKS_PER_SEC<<std::endl;
+    NestPath bin;
     double binWidth = length-2*offset/para;
     double binHeight = width-2*offset/para;
 	bin.Add(0, 0);
@@ -120,11 +130,16 @@ vector<vector<Placement>> Autoplace::translateCoor(double margin, double populat
 	vector<vector<Placement>> place;
 	if (polygons.size() <= 0)
 	{
+        //add wangjx
+        std::cout<<"\npolygons is null"<<std::endl;
 		return place;
 	}
 	Nest nest(bin, polygons, cfg, population);
+    //add wangjx
+    std::cout<<"\nCall nest start"<<std::endl;
+    clock_t start_time1=clock();
     place = nest.startNest();
-
+    std::cout<<"wangjx Nest  Use Time :\t"<<(double)(clock()-start_time1)/CLOCKS_PER_SEC<<std::endl;
     if(place.size() != 0)
     {
         for (int i = 0; i < polygons.size(); i++)

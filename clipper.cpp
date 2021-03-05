@@ -1051,11 +1051,17 @@ bool ClipperBase::AddPath(const Path &pg, PolyType PolyTyp, bool Closed)
   if (!Closed)
     throw clipperException("AddPath: Open paths have been disabled.");
 #endif
-
+  /*
+   * 目测是要判断这个路径是否闭合 但是最后的一句判断是否有问题
+   */
   int highI = (int)pg.size() -1;
-  if (Closed) while (highI > 0 && (pg[highI] == pg[0])) --highI;
-  while (highI > 0 && (pg[highI] == pg[highI -1])) --highI;
-  if ((Closed && highI < 2) || (!Closed && highI < 1)) return false;
+  if (Closed)
+      while (highI > 0 && (pg[highI] == pg[0]))
+          --highI;
+  while (highI > 0 && (pg[highI] == pg[highI -1]))
+      --highI;
+  if ((Closed && highI < 2) || (!Closed && highI < 1))
+      return false;
 
   //create a new edge array ...
   TEdge *edges = new TEdge [highI +1];

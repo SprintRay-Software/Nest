@@ -101,12 +101,16 @@ bool GeometryUtil::pointInPolygon(Segments point, NestPath polygon)
         double yi = polygon.Get(i).y + offsetY;
         double xj = polygon.Get(j).x + offsetX;
         double yj = polygon.Get(j).y + offsetY;
-
+        /*
+         * 判断两线段完全重合
+         */
         if (almostEqual(xi, point.x) && almostEqual(yi, point.y))
 		{
 			return inside; // no result
 		}
-
+        /*
+         *
+         */
         if (onSegment(Segments(xi, yi), Segments(xj, yj), point))
 		{
 			return inside; // exactly on the Segments
@@ -115,7 +119,9 @@ bool GeometryUtil::pointInPolygon(Segments point, NestPath polygon)
         if (almostEqual(xi, xj) && almostEqual(yi, yj)) { // ignore very small lines
 			continue;
 		}
-
+        /*
+         * 如果相交  则inside=true
+         */
         bool intersect = ((yi > point.y) != (yj > point.y)) && (point.x < (xj - xi) * (point.y - yi) / (yj - yi) + xi);
 		if (intersect)
 		{

@@ -174,12 +174,25 @@ private:
 bool Orientation(const Path &poly);
 double Area(const Path &poly);
 int pointInPolygon(const IntPoint &pt, const Path &path);
-
+/*
+ * 简化多边形  通过clipper.Execute将
+ * @input in_poly
+ * @input out_polys
+ * @input PolyFillType = pftEvenOdd
+ *
+ */
 void SimplifyPolygon(const Path &in_poly, Paths &out_polys, PolyFillType fillType = pftEvenOdd);
 void SimplifyPolygons(const Paths &in_polys, Paths &out_polys, PolyFillType fillType = pftEvenOdd);
 void SimplifyPolygons(Paths &polys, PolyFillType fillType = pftEvenOdd);
 
 void CleanPolygon(const Path& in_poly, Path& out_poly, double distance = 1.415);
+/*
+ * 主要用来移除以下类型的点集：
+ * 连接点共线的边，或者近似共线的边（那么在指定距离内不会存在共线点）
+ * 距离过近的相邻点（在指定范围之内）；
+ * 在次相邻的线段以及无关线段之间距离过小（在指定范围之内）；
+ *
+ */
 void CleanPolygon(Path& poly, double distance = 1.415);
 void CleanPolygons(const Paths& in_polys, Paths& out_polys, double distance = 1.415);
 void CleanPolygons(Paths& polys, double distance = 1.415);
@@ -223,6 +236,11 @@ class ClipperBase
 public:
   ClipperBase();
   virtual ~ClipperBase();
+
+  /*
+   * 添加路径
+   *
+   */
   virtual bool AddPath(const Path &pg, PolyType PolyTyp, bool Closed);
   bool AddPaths(const Paths &ppg, PolyType PolyTyp, bool Closed);
   virtual void Clear();

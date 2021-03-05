@@ -16,8 +16,23 @@ public:
     static void changePosition(NestPath binPath, vector<NestPath> polys);
     static int toTree(vector<NestPath> &listNestPath, int idStart);
     static NestPath clipperToNestPath(Path polygon);
-    static void offsetTree(vector<NestPath> t, double offset);
+
+    /**
+     * @brief   modified by wangjx 2021.03.02
+     * change "t" to "&t" for repairing a bug
+     *
+     * @param t
+     * @param offset
+     */
+    static void offsetTree(vector<NestPath> &t, double offset);
     static vector<NestPath> polygonOffset(NestPath polygon, double offset);
+    /**
+     * @brief 创建树
+     *
+     * @param parts
+     * @param curveTolerance
+     * @return vector<NestPath>
+     */
     static vector<NestPath> buildTree(vector<NestPath> parts, double curveTolerance);
 
 private:

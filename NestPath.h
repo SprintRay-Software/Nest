@@ -13,6 +13,11 @@
 using namespace std;
 using namespace ClipperLib;
 
+/** add wangjx
+ * @brief
+ * 存储的coor_x coor_y是模型的中心点 (min+max)/2
+ *
+ */
 class NestPath
 {
 public:
@@ -33,6 +38,8 @@ public:
     vector<NestPath>* getChildren();
     void setChildren(vector<NestPath> *children);
     int getRotation();
+    int getRotationNum();
+    void setRotationNum(int rotationNum);
     void setRotation(int rotation_para);
     void setSegments(vector<Segments> *segments);
     int getSource();
@@ -77,4 +84,5 @@ private:
     int id;
     int source;
     int rotation;
+    int rotationNum;
 };

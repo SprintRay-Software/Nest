@@ -3,6 +3,10 @@
 
 using namespace std;
 
+/**
+ * @brief 里面的xy存放的是点的坐标
+ *
+ */
 class Segments
 {
 public:

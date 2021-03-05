@@ -19,6 +19,9 @@ public:
     static bool onSegment(Segments A, Segments B, Segments p);
     static bool pointInPolygon(Segments point, NestPath polygon);
     static Bound getPolygonBounds(NestPath polygon);
+    /*
+     * 返回旋转之后的框架
+     */
     static Bound rotatePolygon(NestPath polygon, int angle);
     static NestPath rotatePolygon2Polygon(NestPath polygon, int degrees);
     static bool isRectangle(NestPath poly, double tolerance);

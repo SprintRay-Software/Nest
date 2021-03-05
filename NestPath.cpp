@@ -124,6 +124,16 @@ int NestPath::getRotation()
     return rotation;
 }
 
+int NestPath::getRotationNum()
+{
+    return rotationNum;
+}
+
+void NestPath::setRotationNum(int rotationNum)
+{
+    this->rotationNum = rotationNum;
+}
+
 void NestPath::setRotation(int rotation)
 {
     this->rotation = rotation;
@@ -178,6 +188,7 @@ NestPath& NestPath::operator=(NestPath srcNestPath)
     id = srcNestPath.id;
     name = srcNestPath.name;
     rotation = srcNestPath.rotation;
+    rotationNum = srcNestPath.rotationNum;
     source = srcNestPath.source;
     offsetX = srcNestPath.offsetX;
     offsetY = srcNestPath.offsetY;
@@ -198,17 +209,28 @@ NestPath& NestPath::operator=(NestPath srcNestPath)
 NestPath NestPath::cleanNestPath(NestPath srcPath)
 {
 	/**
-		* Convert NestPath 2 Clipper
-		*/
+	 * Convert NestPath 2 Clipper
+	 */
     Path path = CommonUtil::nestPath2Path(srcPath);
 	Paths simple;
-	SimplifyPolygon(path, simple, PolyFillType::pftNonZero);
+    /*
+     * Clipper::SimplifyPolygon
+     * 简化多边形  将自交部分从自身的部分中剔除
+     */
+    SimplifyPolygon(path, simple, PolyFillType::pftNonZero);
 	if (simple.size() == 0) 
 	{
 		return NULL;
 	}
+    /*
+     * simple[0]是SimplifyPolygon输出的第一个图形轮廓
+     *
+     */
 	Path biggest = simple.at(0);
 	double biggestArea = abs(Area(biggest));
+    /*
+     * 遍历检验最大面积  这个Area求出来的到底是模型面积还是模型和Y轴合计的面积
+     */
 	for (int i = 0; i < simple.size(); i++) 
 	{
 		double area = abs(Area(simple.at(i)));
@@ -218,6 +240,7 @@ NestPath NestPath::cleanNestPath(NestPath srcPath)
 			biggestArea = area;
 		}
 	}
+
     CleanPolygon(biggest, srcPath.config->curveTolerance * Config::cliiperScale);
 	if (biggest.size() == 0)
 	{
@@ -225,8 +248,8 @@ NestPath NestPath::cleanNestPath(NestPath srcPath)
 	}
 
 	/**
-		*  Convert Clipper 2 NestPath
-		*/
+      *  Convert Clipper 2 NestPath
+      */
 	NestPath cleanPath;
     cleanPath = CommonUtil::path2NestPath(biggest);
     cleanPath.bid = srcPath.bid;

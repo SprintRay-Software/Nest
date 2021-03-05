@@ -152,10 +152,13 @@ void GeneticAlgorithm::init()
         int angle = randomAngle(adam.at(i));
         angles.push_back(angle);
 	}
-    population->push_back(Individual(adam, angles));
+    population->push_back(Individual(adam, angles));    //this individual's fitness =-1
+    //std::cout<<"wangjx adam.fitness"<<population->at(0).fitness<<std::endl;
     while (population->size() < config.populationSize)
 	{
+        //std::cout<<"wangjx population->at(0).fitness"<<population->at(0).fitness<<std::endl;
         Individual mutant = mutate(population->at(0));
+        //std::cout<<"wangjx population->at(0).fitness1"<<population->at(0).fitness<<std::endl;
         population->push_back(mutant);
 	}
 }

@@ -4,12 +4,14 @@
 
 bool Segments::equals(Segments obj)
 {
-	Segments s = (Segments)obj;
-    if (x == s.x && y == s.y)
-	{
-		return true;
-	}
-	return false;
+//	Segments s = (Segments)obj;
+//    if (x == s.x && y == s.y)
+//	{
+//		return true;
+//	}
+//	return false;
+    //changed by wangjx
+    return  x==obj.getX()&&y==obj.getY()?true:false;
 }
 
 Segments::Segments()
