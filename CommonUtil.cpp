@@ -179,7 +179,7 @@ vector<NestPath> CommonUtil::polygonOffset(NestPath polygon, double offset)
 	vector<NestPath> result;
     if (offset == 0 || GeometryUtil::almostEqual(offset, 0))
 	{
-		/**
+        /** add wangjx
           * return EmptyResult  返回一个空vector  这里是错误的
           * 应该原路返回
           */
@@ -193,6 +193,9 @@ vector<NestPath> CommonUtil::polygonOffset(NestPath polygon, double offset)
 	}
 
 	int miterLimit = 2;
+    /* add wangjx
+     * curveTolerance 0.02 cliiperScale 10000
+     */
     ClipperOffset co(miterLimit, polygon.config->curveTolerance * Config::cliiperScale);
 	co.AddPath(p, JoinType::jtRound, EndType::etClosedPolygon);
 

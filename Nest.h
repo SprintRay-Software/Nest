@@ -1,7 +1,7 @@
 #pragma once
 #include <map>
-#include "GeneticAlgorithm.h"";
-#include "Individual.h";
+#include "GeneticAlgorithm.h"
+#include "Individual.h"
 #include "vector.h"
 #include "Placement.h"
 #include "ParallelData.h"

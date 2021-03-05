@@ -1,5 +1,7 @@
-#include "GeneticAlgorithm.h"";
-#include "Individual.h";
+//removed by wangjx
+//#include """; 这种写法改为正常写法
+#include "GeneticAlgorithm.h"
+#include "Individual.h"
 #include "Nest.h"
 #include "CommonUtil.h"
 #include "GeometryUtil.h"
