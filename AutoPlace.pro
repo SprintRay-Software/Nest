@@ -70,14 +70,18 @@ unix {
 win32{
     CONFIG(release,debug|release){
 message(release)
+        TARGET = AutoPlace
         target.path = D:\QTProjects\MR\Moonray\PlanU\Moonray-0319\Moonray-0319\AutoPlace\AutoPlace\lib\
-        target.files += D:\QTProjects\MR\Nest_DLL\build-AutoPlace-Desktop_Qt_5_14_2_MSVC2017_64bit-Release\release\AutoPlace.dll
+        target.files += AutoPlace.dll
         #target.files += D:\QTProjects\MR\Nest_DLL\build-AutoPlace-Desktop_Qt_5_14_2_MSVC2017_64bit-Release\release\AutoPlace.lib
     }else{
 message(debug)
+        #CONFIG += debug     //not useful
+        TARGET = AutoPlaced
         target.path = D:\QTProjects\MR\Moonray\PlanU\Moonray-0319\Moonray-0319\AutoPlace\AutoPlace\lib\
-        target.files += D:\QTProjects\MR\Nest_DLL\build-AutoPlace-Desktop_Qt_5_14_2_MSVC2017_64bit-Debug\debug\AutoPlace.dll
-}
+        #target.files += D:\QTProjects\MR\Nest_DLL\build-AutoPlace-Desktop_Qt_5_14_2_MSVC2017_64bit-Debug\debug\AutoPlace.dll
+        target.files += AutoPlace.dll
+    }
 }
 INSTALLS += target
 #Note: Project - Config - Make --> add arguments install .otherwise the script up will not work

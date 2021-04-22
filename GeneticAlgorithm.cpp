@@ -194,7 +194,7 @@ int GeneticAlgorithm::randomAngle(NestPath part)
 {
 	vector<int> angleList;
     int rotate = max(1, part.getRotation());
-    std::cout<<"Rotate :"<<part.getRotation()<<std::endl;
+    //std::cout<<"Rotate :"<<part.getRotation()<<std::endl;
 	if (rotate == 0) 
 	{
 		angleList.push_back(0);
@@ -206,11 +206,11 @@ int GeneticAlgorithm::randomAngle(NestPath part)
 			angleList.push_back((360 / rotate) * i);
 		}
 	}
-    std::cout<<"randomAngle angleList.size()"<<angleList.size()<<std::endl;
+    //std::cout<<"randomAngle angleList.size()"<<angleList.size()<<std::endl;
 	unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
-    std::cout<<"randomAngle"<<__LINE__<<std::endl;
+    //std::cout<<"randomAngle"<<__LINE__<<std::endl;
     std::shuffle(angleList.begin(), angleList.end(), std::default_random_engine(seed));
-    std::cout<<"angleList.size()"<<angleList.size()<<std::endl;
+    //std::cout<<"angleList.size()"<<angleList.size()<<std::endl;
     for (int i = 0; i < angleList.size(); i++)
 	{
         Bound rotatedPart = GeometryUtil::rotatePolygon(part, angleList.at(i));
@@ -219,7 +219,7 @@ int GeneticAlgorithm::randomAngle(NestPath part)
 			return angleList.at(i);
 		}
 	}
-    std::cout<<"randomAngle"<<__LINE__<<std::endl;
+    //std::cout<<"randomAngle"<<__LINE__<<std::endl;
     return -1;
 }
 

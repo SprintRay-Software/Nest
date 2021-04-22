@@ -20,7 +20,7 @@ public:
     static bool pointInPolygon(Segments point, NestPath polygon);
     static Bound getPolygonBounds(NestPath polygon);
     /*
-     * 返回旋转之后的框架
+     * 返回旋转之后的多边形
      */
     static Bound rotatePolygon(NestPath polygon, int angle);
     static NestPath rotatePolygon2Polygon(NestPath polygon, int degrees);

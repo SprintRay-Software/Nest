@@ -35,7 +35,7 @@ bool AutoPlace::read(string fileName, vector<NestPath> &polygons, double margin,
             iss >> subStr;
             float x, y;
             sscanf(subStr.c_str(), "[%f,%f]", &x, &y);
-            std::cout<<"Test xy "<<x<<"\t"<<y<<std::endl;
+            //std::cout<<"Test xy "<<x<<"\t"<<y<<std::endl;
             tempPolygon.Add(x, y);
         }
         iss>>subStr;
@@ -43,7 +43,7 @@ bool AutoPlace::read(string fileName, vector<NestPath> &polygons, double margin,
         sscanf(subStr.c_str(), "[%f,%f]", &coor_x, &coor_y);
         iss>>subStr;
         sscanf(subStr.c_str(), "[%f,%f]", &coor_Minx_From_Border, &coor_Miny_From_Border);
-        std::cout<<"Test xy "<<coor_x<<"\t"<<coor_y<<std::endl;
+        //std::cout<<"Test xy "<<coor_x<<"\t"<<coor_y<<std::endl;
         string::size_type iPos = fileName.find_last_of('/') + 1;
         string tempFileName = fileName.substr(iPos, fileName.length() - iPos);
         string name = tempFileName.substr(0, tempFileName.rfind("."));

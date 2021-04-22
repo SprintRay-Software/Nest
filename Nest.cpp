@@ -270,16 +270,17 @@ Result Nest::launchWorkers(vector<NestPath> tree, NestPath binPolygon, Config co
 	}
     individual->fitness = placements.at(0).fitness;
 	Result bestResult = placements.at(0);
-	for (int i = 1; i < placements.size(); i++) 
-	{
-        //add wangjx
-        //fitness这是一个满意度还是一个不满意度？
-        std::cout<<"Result Fitness :"<<i<<"\t"<<bestResult.fitness<<std::endl;
-        if (placements.at(i).fitness < bestResult.fitness)
-		{
-			bestResult = placements.at(i);
-		}
-	}
+//  这一步永远不会触发  因为Bestresult是一个只有一个元素的数据。
+//	for (int i = 1; i < placements.size(); i++)
+//	{
+//        //add wangjx
+//        //fitness这是一个满意度还是一个不满意度？
+//        std::cout<<"Result Fitness :"<<i<<"\t"<<bestResult.fitness<<std::endl;
+//        if (placements.at(i).fitness < bestResult.fitness)
+//		{
+//			bestResult = placements.at(i);
+//		}
+//	}
     return bestResult;
 }
 
@@ -294,6 +295,7 @@ vector<vector<Placement>> Nest::applyPlacement(Result best, vector<NestPath> tre
             Vector v = best.placements.at(i).at(j);
             NestPath nestPath = tree.at(v.id);
 			NestPath child;
+            //这里的局部变量i不会影响外部变量i 但是这里应该修改  Bug
             for (int i = 0; i < nestPath.getChildren()->size(); i++)
 			{
                 child = nestPath.getChildren()->at(i);

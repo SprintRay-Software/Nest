@@ -27,7 +27,8 @@ Result Placementworker::placePaths(vector<NestPath> &paths)
         r.setId(paths.at(i).getId());
 		rotated.push_back(r);
 	}
-	paths = rotated;
+    paths.clear();
+    paths = std::move(rotated);
 
     vector<vector<Vector>> allPlacements;
 	double fitness = 0;
