@@ -4,7 +4,6 @@
 #include "Bound.h"
 #include "ParallelData.h"
 #include "vector.h"
-
 class NfpUtil
 {
 public:

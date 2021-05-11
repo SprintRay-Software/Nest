@@ -1,11 +1,5 @@
-#include "GeneticAlgorithm.h"
-#include "Individual.h"
 #include "Nest.h"
-#include "CommonUtil.h"
-#include "GeometryUtil.h"
-#include "NestPath.h"
-#include "Result.h"
-#include "qDebug"
+
 struct LocMinSorter
 {
   inline bool operator()(const NestPath& locMin1, const NestPath& locMin2)
@@ -24,7 +18,7 @@ Nest::Nest(NestPath binPath, vector<NestPath> parts, Config config, int count)
     this->config = config;
     this->loopCount = count;
     this->nfpCache = new map<string, vector<NestPath>>();
-    std::cout<<"Parts size:"<<parts[0].Size()<<std::endl;
+    //std::cout<<"Parts size:"<<parts[0].Size()<<std::endl;
 }
 
 /*
@@ -119,11 +113,13 @@ vector<vector<Placement>> Nest::startNest()
 		{
             tree.at(i).reverse();
 		}
+        tree.at(i).Uorientation=parts[i].Uorientation;  //这一步的时候tree的U就已经不对了  fixed
 	}
 
     launchCount = 0;
 	Result best;
-    for (int i = 0; i < loopCount; i++)
+//    for (int i = 0; i < loopCount; i++)
+    for (int i = 0; i < 1; i++)
 	{
         Result result = launchWorkers(tree, binPolygon, config);
         if (i == 0)
@@ -165,22 +161,51 @@ Result Nest::launchWorkers(vector<NestPath> tree, NestPath binPolygon, Config co
     if (GA == NULL)
 	{
 		vector<NestPath> adam;
-        NestPath nestPath;
         for (int i = 0; i < tree.size(); i++)
 		{
-			nestPath = tree.at(i);
-            NestPath clone1(nestPath) ;
+            NestPath clone1(tree.at(i)) ;
             adam.push_back(std::move(clone1));
-            adam.at(i).area = GeometryUtil::polygonArea(nestPath);
+            adam.at(i).area = GeometryUtil::polygonArea(clone1);
 		}
         std::sort(adam.begin(), adam.end(), LocMinSorter());
+        //sort会导致Segments转换。但是其对应的Uorientation却不改变。这个是Sort的bug
+//        for(int s=0;s<adam.size();s++)
+//        {
+//            for(int k=0;k<tree.size();k++)
+//            {
+//                if(adam.at(s).name==tree.at(k).name)
+//                {
+//                    adam.at(s).Uorientation=tree.at(k).Uorientation;
+//                    break;
+//                }
+//            }
+//        }
+        for(auto &p:adam)
+        {
+            for(auto &q:tree)
+            {
+                if(p.name==q.name)
+                {
+                    p.Uorientation=q.Uorientation;
+                    break;
+                }
+            }
+        }
+        for(int i=0;i<adam.size();i++)  //在这一步对模型进行嵌套角度 第一个模型朝上，角度不变，第二个模型朝下，角度+180
+        {
+            if(i%2==0)
+            {
+                adam.at(i).Uorientation+=180;
+            }
+        }
         GA = new GeneticAlgorithm(adam, binPolygon, config);
         if(adam.size() != 0)
         {
             rotationNumber = adam[0].getRotation();
         }
+
 	}
-    Individual *individual = NULL;
+    Individual *individual =NULL;
     for (int i = 0; i < GA->population->size(); i++)
 	{
         //第一次循环所有的fitness都是-1
@@ -197,7 +222,10 @@ Result Nest::launchWorkers(vector<NestPath> tree, NestPath binPolygon, Config co
 	}
     vector<NestPath> placeList = individual->getPlacement();
     vector<int> rotations = individual->getRotation();
-	vector<int> ids;
+//    vector<int> rotations;
+//    rotations.push_back(0);
+//    rotations.push_back(0);
+    vector<int> ids;
     for (int i = 0; i < placeList.size(); i++)
 	{
         ids.push_back(placeList.at(i).getId());
@@ -225,7 +253,7 @@ Result Nest::launchWorkers(vector<NestPath> tree, NestPath binPolygon, Config co
         if(data->value == NULL)
         {
             NestPath b = nfpPair.getB();
-            b.setRotation(b.getRotation() + 360/rotationNumber);
+            b.setRotation(b.getRotation() /*+ 360/rotationNumber*/);
             nfpPair.setB(b);
             NfpKey keyed1(nfpPair.getA().getId(), nfpPair.getB().getId(), nfpPair.getKey().isInside(), nfpPair.getA().getRotation(), nfpPair.getB().getRotation());
             nfpPair = NfpPair(nfpPair.getA(), nfpPair.getB(), keyed1);
@@ -242,7 +270,8 @@ Result Nest::launchWorkers(vector<NestPath> tree, NestPath binPolygon, Config co
             qDebug() << "point is null" << endl;
         }
         try {
-                nfpCache->insert(make_pair(tkey, *Nfp.value));
+
+            nfpCache->insert(make_pair(tkey, *Nfp.value));
         } catch (...) {
             qDebug() << "insert err" << endl;
         }
@@ -274,7 +303,7 @@ Result Nest::launchWorkers(vector<NestPath> tree, NestPath binPolygon, Config co
 //	for (int i = 1; i < placements.size(); i++)
 //	{
 //        //add wangjx
-//        //fitness这是一个满意度还是一个不满意度？
+//        //fitness这是一个满意度还是一个不满意度
 //        std::cout<<"Result Fitness :"<<i<<"\t"<<bestResult.fitness<<std::endl;
 //        if (placements.at(i).fitness < bestResult.fitness)
 //		{

@@ -149,10 +149,10 @@ void GeneticAlgorithm::init()
 {
     for (int i = 0; i < adam.size(); i++)
 	{
-        std::cout<<"GeneticAlgorithm I"<<i<<"\t"<<adam.at(0).getRotation()<<std::endl;
-        int angle = randomAngle(adam.at(i));
-        std::cout<<"Angle :"<<angle<<std::endl;
-        angles.push_back(angle);
+        //std::cout<<"GeneticAlgorithm I"<<i<<"\t"<<adam.at(0).getRotation()<<std::endl;
+        //int angle = randomAngle(adam.at(i));
+        //std::cout<<"Angle :"<<angle<<std::endl;
+        angles.push_back(this->adam.at(i).Uorientation);
 	}
     population->push_back(Individual(adam, angles));    //this individual's fitness =-1
     while (population->size() < config.populationSize)

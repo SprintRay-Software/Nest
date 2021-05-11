@@ -71,7 +71,7 @@ public:
     string name;
     double coor_x;
     double coor_y;
-
+    float  Uorientation;
 private:
 
     vector<NestPath> *children;

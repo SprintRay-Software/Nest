@@ -9,6 +9,16 @@
 #include "Placement.h"
 #include <QVector>
 #include "CommonUtil.h"
+#include "Nest.h"
+#include <QString>
+#include <QCoreApplication>
+#include <QDir>
+#include <QDirIterator>
+#include <qDebug>
+#include <QTextCodec>
+#include <iostream>
+#include <fstream>
+#include <sstream>
 double renderScale = 0.095;
 class AUTOPLACE_EXPORT AutoPlace
 {

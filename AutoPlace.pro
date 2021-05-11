@@ -30,8 +30,7 @@ SOURCES += \
     Vector.cpp \
     clipper.cpp \
     autoplace.cpp \
-    nestpath.cpp \
-    readwritetool.cpp
+    nestpath.cpp
 
 HEADERS += \
     Bound.h \
@@ -60,8 +59,7 @@ HEADERS += \
     clipper.hpp \
     AutoPlace_global.h \
     autoplace.h \
-    nestpath.h \
-    readwritetool.h
+    nestpath.h
 
 # Default rules for deployment.
 unix {
@@ -80,7 +78,7 @@ message(debug)
         TARGET = AutoPlaced
         target.path = D:\QTProjects\MR\Moonray\PlanU\Moonray-0319\Moonray-0319\AutoPlace\AutoPlace\lib\
         #target.files += D:\QTProjects\MR\Nest_DLL\build-AutoPlace-Desktop_Qt_5_14_2_MSVC2017_64bit-Debug\debug\AutoPlace.dll
-        target.files += AutoPlace.dll
+        target.files += AutoPlaced.dll
     }
 }
 INSTALLS += target

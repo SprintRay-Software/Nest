@@ -1211,29 +1211,17 @@ vector<NestPath>* GeometryUtil::noFitPolygonRectangle(NestPath A, NestPath B)
 		}
 	}
 
-    double minBX = B.Get(0).x;
-    double minBY = B.Get(0).y;
-    double maxBX = B.Get(0).x;
-    double maxBY = B.Get(0).y;
-	for (int i = 1; i < B.Size(); i++) 
-	{
-        if (B.Get(i).x < minBX)
-		{
-            minBX = B.Get(i).x;
-		}
-        if (B.Get(i).y < minBY)
-		{
-            minBY = B.Get(i).y;
-		}
-        if (B.Get(i).x > maxBX)
-		{
-            maxBX = B.Get(i).x;
-		}
-        if (B.Get(i).y > maxBY)
-		{
-            maxBY = B.Get(i).y;
-		}
-	}
+    double minBX = std::numeric_limits<double>::max();
+    double minBY = std::numeric_limits<double>::max();
+    double maxBX = -std::numeric_limits<double>::max();
+    double maxBY = -std::numeric_limits<double>::max();
+    for(auto &p:*(B.GetSegments()))
+    {
+        minBX=minBX<p.getX()?minBX:p.getX();
+        minBY=minBY<p.getY()?minBY:p.getY();
+        maxBX=p.getX()>maxBX?p.getX():maxBX;
+        maxBY=p.getY()>maxBY?p.getY():maxBY;
+    }
 
 
     qDebug()<<"maxBX - minBX = "<< maxBX<<","<<minBX<<","<<maxBX - minBX;
@@ -1256,7 +1244,7 @@ vector<NestPath>* GeometryUtil::noFitPolygonRectangle(NestPath A, NestPath B)
 	nfpRect = new vector<NestPath>();
 	NestPath res;
     //add wangjx
-    //这里为什么要加b[0].x？？？
+    //这里为什么要加b[0].x
     res.Add(minAX - minBX + B.Get(0).x, minAY - minBY + B.Get(0).y);
     res.Add(maxAX - maxBX + B.Get(0).x, minAY - minBY + B.Get(0).y);
     res.Add(maxAX - maxBX + B.Get(0).x, maxAY - maxBY + B.Get(0).y);

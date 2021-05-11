@@ -4,8 +4,9 @@
 Individual::Individual() 
 {
     this->fitness = -1;
-    this->placement;
-    this->rotation;
+    //这是什么操作
+    //this->placement;
+    //this->rotation;
 }
 
 Individual::Individual(vector<NestPath> placement, vector<int> rotation)

@@ -12,7 +12,13 @@
 #include <QCoreApplication>
 #include <iostream>
 #include <fstream>
-#include "readwritetool.h"
+#include "GeneticAlgorithm.h"
+#include "Individual.h"
+#include "CommonUtil.h"
+#include "GeometryUtil.h"
+#include "NestPath.h"
+#include "Result.h"
+#include "qDebug"
 class Nest
 {
 public:

@@ -1,14 +1,5 @@
-#include <iostream>
-#include <fstream>
-#include <sstream>
 #include "autoplace.h"
-#include "Nest.h"
-#include <QString>
-#include <QCoreApplication>
-#include <QDir>
-#include <QDirIterator>
-#include <qDebug>
-#include <QTextCodec>
+
 
 using namespace std;
 
@@ -39,18 +30,20 @@ bool AutoPlace::read(string fileName, vector<NestPath> &polygons, double margin,
             tempPolygon.Add(x, y);
         }
         iss>>subStr;
-        float coor_x,coor_y;
+        float coor_x,coor_y,uorientation;
         sscanf(subStr.c_str(), "[%f,%f]", &coor_x, &coor_y);
         iss>>subStr;
         sscanf(subStr.c_str(), "[%f,%f]", &coor_Minx_From_Border, &coor_Miny_From_Border);
         //std::cout<<"Test xy "<<coor_x<<"\t"<<coor_y<<std::endl;
+        iss>>subStr;
+        sscanf(subStr.c_str(), "[%f]",&uorientation);
         string::size_type iPos = fileName.find_last_of('/') + 1;
         string tempFileName = fileName.substr(iPos, fileName.length() - iPos);
         string name = tempFileName.substr(0, tempFileName.rfind("."));
         tempPolygon.name = name;
         tempPolygon.setRotation(rotateNum);
         tempPolygon.setRotationNum(rotateNum);
-
+        tempPolygon.Uorientation=-uorientation;
         double minX = tempPolygon.segments->at(0).x, maxX = tempPolygon.segments->at(0).x, minY = tempPolygon.segments->at(0).y, maxY = tempPolygon.segments->at(0).y;
         for (int i = 0; i < tempPolygon.segments->size(); i++)
         {
@@ -73,21 +66,6 @@ bool AutoPlace::read(string fileName, vector<NestPath> &polygons, double margin,
         }
         tempPolygon.coor_x=coor_x;
         tempPolygon.coor_y=coor_y;
-//        ClipperLib::Paths dst_paths;
-//        ClipperLib::Path dst_path;
-//        for (int i = 0; i < tempPolygon.segments->size(); i++)
-//        {
-//            dst_path.push_back(ClipperLib::IntPoint(static_cast<ClipperLib::cInt>(tempPolygon.segments->at(i).x * 1000), static_cast<ClipperLib::cInt>(tempPolygon.segments->at(i).y * 1000)));
-//        }
-//        dst_paths.push_back(dst_path);
-//        tempPolygon.segments->clear();
-//        for (const auto& dst_path : dst_paths)
-//        {
-//            for (const auto& point : dst_path)
-//            {
-//                tempPolygon.segments->push_back(Segments((double)(point.X / 1000.0), (double)(point.Y / 1000.0)));
-//            }
-//        }
         polygons.push_back(tempPolygon);
     }
 }
@@ -159,8 +137,8 @@ vector<vector<Placement>> AutoPlace::translateCoor(double margin, double populat
     }
     zoomBorderToNormalSize(polygons);
     NestPath bin;
-    double binWidth = length-2*offset/para;
-    double binHeight = width-2*offset/para;
+    double binWidth = length;
+    double binHeight = width;
     bin.Add(0, 0);
     bin.Add(binWidth, 0);
     bin.Add(binWidth, binHeight);
@@ -182,15 +160,15 @@ vector<vector<Placement>> AutoPlace::translateCoor(double margin, double populat
     }
     //for test
     std::vector<double> tmpMinMax=getMinMaxForSegments(*polygons[0].GetSegments());
-    std::cout<<"tmpMinMax :"<<tmpMinMax[0]<<"\t"<<
-               tmpMinMax[1]<<"\t"<<
-               tmpMinMax[2]<<"\t"<<
-               tmpMinMax[3]<<std::endl;
+//    std::cout<<"tmpMinMax :"<<tmpMinMax[0]<<"\t"<<
+//               tmpMinMax[1]<<"\t"<<
+//               tmpMinMax[2]<<"\t"<<
+//               tmpMinMax[3]<<std::endl;
     CommonUtil::offsetTree(polygons,margin);
-    for(int j=0;j<polygons.size();j++)
-    {
-        //writeSegmentsTotxt(polygons[j],to_string(j)+"Off");
-    }
+//    for(int j=0;j<polygons.size();j++)
+//    {
+//        //writeSegmentsTotxt(polygons[j],to_string(j)+"Off");
+//    }
     Nest nest(bin, polygons, cfg, population);
     place = nest.startNest();
     if(place.size() != 0)

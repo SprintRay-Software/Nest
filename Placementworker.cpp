@@ -57,7 +57,14 @@ Result Placementworker::placePaths(vector<NestPath> &paths)
 			}
 
             vector<NestPath> binNfp = nfpCache[key];
-
+            //test binnfp
+            std::cout<<"BinNfp:"<<key<<"\t"<<std::endl;
+            for(auto &p:*(binNfp.at(0).GetSegments()))
+            {
+                std::cout<<p.getX()<<","<<p.getY()<<"\t";
+            }
+            std::cout<<std::endl;
+            //end test
 			// ensure exists
 			bool error = false;
 			for (int j = 0; j < placed->size(); j++) 
@@ -100,6 +107,14 @@ Result Placementworker::placePaths(vector<NestPath> &paths)
 				}
 				placements->push_back(*position);
 				placed->push_back(path);
+                //test nfp
+                std::cout<<"Nfp:"<<key<<"\t"<<std::endl;
+                for(auto &p:*(path.GetSegments()))
+                {
+                    std::cout<<p.getX()+position->x<<","<<p.getY()+position->y<<"\t";
+                }
+                std::cout<<std::endl;
+                //end test
 				continue;
 			}
 
@@ -177,7 +192,14 @@ Result Placementworker::placePaths(vector<NestPath> &paths)
 			{
                 f.push_back(toNestCoordinates(finalNfp.at(j)));
 			}
-
+            //testFinal nfp
+            std::cout<<"FinalNfp:"<<key<<"\t"<<std::endl;
+            for(auto &p:*(f.at(0).GetSegments()))
+            {
+                std::cout<<p.getX()<<","<<p.getY()<<"\t";
+            }
+            std::cout<<std::endl;
+            //end test
 			vector<NestPath> finalNfpf = f;
             double minArea = DBL_MIN;
 			double minX = DBL_MAX;
@@ -214,7 +236,14 @@ Result Placementworker::placePaths(vector<NestPath> &paths)
                         allPoints->Add(Segments(path.Get(m).x + shifVector->x, path.Get(m).y + shifVector->y));
 					}
                     Bound rectBounds = GeometryUtil::getPolygonBounds(*allPoints);
-
+                    //test All Pointsnfp
+                    std::cout<<"All Points Nfp:"<<key<<"\t"<<std::endl;
+                    for(auto &p:*(allPoints->GetSegments()))
+                    {
+                        std::cout<<p.getX()<<","<<p.getY()<<"\t";
+                    }
+                    std::cout<<std::endl;
+                    //end test
                     area = rectBounds.getWidth() * 2 + rectBounds.getHeight();
                     if (minArea == DBL_MIN
                         || area < minArea
