@@ -1,6 +1,7 @@
 QT -= gui
 TEMPLATE = lib
 DEFINES += AUTOPLACE_LIBRARY
+DEFINES += SEGMENTS_LIBRARY
 CONFIG += c++11
 DEFINES += QT_DEPRECATED_WARNINGS
 
@@ -54,6 +55,7 @@ HEADERS += \
     Result.h \
     SegmentRelation.h \
     Segments.h \
+    Segments_global.h \
     SvgUtil.h \
     Vector.h \
     clipper.hpp \
@@ -80,6 +82,21 @@ message(debug)
         #target.files += D:\QTProjects\MR\Nest_DLL\build-AutoPlace-Desktop_Qt_5_14_2_MSVC2017_64bit-Debug\debug\AutoPlace.dll
         target.files += AutoPlaced.dll
     }
+}
+mac{
+DEFINES += OM_STATIC_BUILD      #for openMesh
+message(Mac)
+CONFIG(release,debug|release){
+message(release)
+    TARGET = AutoPlace
+    target.path = /Users/qiangchen/Desktop/Junxiang/Moonray-UNested/AutoPlace/AutoPlace/lib/
+    target.files = libAutoPlace.dylib
+}else{
+message(debug)
+    TARGET = AutoPlaced
+    target.path = /Users/qiangchen/Desktop/Junxiang/Moonray-UNested/AutoPlace/AutoPlace/lib/
+    target.files = libAutoPlaced.dylib
+}
 }
 INSTALLS += target
 #Note: Project - Config - Make --> add arguments install .otherwise the script up will not work
